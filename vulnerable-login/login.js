@@ -13,8 +13,6 @@ app.use(session({
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
 
-
-
 // display login page
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname + '/index.html'))
@@ -24,7 +22,9 @@ app.get('/', function(req, res) {
 app.post('/auth', function(req, res) {
   let username = req.body.username
   let password = req.body.password
-  let sql = `SELECT * FROM users WHERE username = ? AND password = ?`
+
+  // pooly created SQL statement used to query data base
+  let sql = "SELECT * FROM users WHERE username = '" + username + "' AND password = '" + password + "'"
 
   if (username && password) {
     // connect to database
@@ -36,7 +36,7 @@ app.post('/auth', function(req, res) {
     })
 
     // validate login information against database
-    db.get(sql, [username, password], (err, row) => {
+    db.get(sql, (err, row) => {
       if (err) {
         return console.error(err.message)
       } else if (!row) {
