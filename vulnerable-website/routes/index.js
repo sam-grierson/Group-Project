@@ -5,7 +5,7 @@ const router = express.Router();
 const Cart = require("../models/cart")
 
 router.get("/", (req, res) => {
-  let db = new sqlite3.Database("db/database.db");
+  let db = new sqlite3.Database("db/database.db"); // path could become an issue when run on windows?
   let sql = `SELECT * FROM products`;
   let session = req.session
 
@@ -27,7 +27,7 @@ router.get("/", (req, res) => {
       });
     }
   });
-  
+
   db.close((err) => {
     if (err) {
       return console.error(err.message)
@@ -37,7 +37,7 @@ router.get("/", (req, res) => {
 
 router.get("/add-cart/:id", (req, res) => {
   let db = new sqlite3.Database("db/database.db");
-  let sql = `SELECT * FROM products WHERE id = ?`; 
+  let sql = `SELECT * FROM products WHERE id = ?`;
   let productId = req.params.id;
 
   db.get(sql, [productId], (err, product) => {
