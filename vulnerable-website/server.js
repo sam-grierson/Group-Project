@@ -3,10 +3,20 @@ const app = express();
 const path = require("path");
 const session = require('express-session')
 
+const dbPath = path.resolve(__dirname,'db/database.db');
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database(dbPath);
+
 const indexRoute = require("./routes/index");
 const loginRoute = require("./routes/login");
 const registerRoute = require("./routes/register");
 const cartRoute = require("./routes/cart");
+
+db.serialize(function(){
+	db.run("CREATE TABLE IF NOT EXISTS users('id' INTEGER PRIMARY KEY AUTOINCREMENT,'username' TEXT NOT NULL UNIQUE,'password' TEXT NOT NULL, 'Email' TEXT NOT NULL)");
+	db.run("CREATE TABLE IF NOT EXISTS products('id' INTEGER PRIMARY KEY AUTOINCREMENT, 'title' TEXT NOT NULL, 'Price' FLOAT NOT NULL, 'image' TEXT ,'ProductDescripion' TEXT)");
+});
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

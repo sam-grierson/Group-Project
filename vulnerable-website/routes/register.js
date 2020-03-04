@@ -15,7 +15,9 @@ router.post("/", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
   let passwordTwo = req.body.passwordTwo;
-  let sql = `INSERT INTO users VALUES(?, ?, ?)`
+  let sql = `INSERT INTO users(username,password,email) VALUES(?, ?, ?)`
+  //^changed to make the primary key AUTOINCREMENT function work properly, now id is autoincremented to
+  // one per user, making all id's unique.
 
   if (username && email && password && passwordTwo) {
     if (password !== passwordTwo) {
@@ -30,7 +32,7 @@ router.post("/", (req, res) => {
         }
       });
 
-      db.run(sql, [id,username,password], (err) => {
+      db.run(sql, [username,password,email], (err) => {
         if (err) {
           return console.error(err.message);
         }
