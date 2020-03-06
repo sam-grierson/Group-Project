@@ -18,4 +18,21 @@ router.get("/", (req, res) => {
   });
 });
 
+router.get("/remove-cart/:id", (req, res) => {
+  let productId = req.params.id;
+  let cart = new Cart(req.session.cart ? req.session.cart : {});
+
+  cart.removeItem(productId);
+  req.session.cart = cart;
+  res.redirect("back")
+});
+
+router.get("/empty-cart", (req, res) => {
+  let cart = new Cart(req.session.cart ? req.session.cart : {});
+
+  cart.clearCart();
+  req.session.cart = cart;
+  res.redirect("back")
+});
+
 module.exports = router;
