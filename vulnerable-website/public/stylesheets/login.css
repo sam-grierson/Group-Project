@@ -1,0 +1,172 @@
+body {font-family: Arial, Helvetica, sans-serif;}
+
+/* Full-width input fields */
+.login[type=text], .login[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+.bb {
+  background-color: #555;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-size: 20px;
+}
+
+.bb:hover {
+  opacity: 0.8;
+}
+
+/* Extra styles for the cancel button */
+.cancelbtn {
+  width: auto;
+  padding: 10px 18px;
+  background-color: #f44336;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.cancelbtn:hover {
+  opacity: 0.8;
+}
+
+.logcontainer {
+  padding: 16px;
+}
+
+.psw {
+  float: right;
+  padding-top: 16px;
+}
+
+/* The Modal (background) */
+.login_div {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.login-content {
+  background-color: #fefefe;
+  margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button (x) */
+.close {
+  position: absolute;
+  right: 25px;
+  top: 0;
+  color: #000;
+  font-size: 65px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: red;
+  cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animatelog {
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+  from {-webkit-transform: scale(0)}
+  to {-webkit-transform: scale(1)}
+}
+
+@keyframes animatezoom {
+  from {transform: scale(0)}
+  to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+  .psw {
+     display: block;
+     float: none;
+  }
+  .cancelbtn {
+     width: 100%;
+  }
+}
+
+/* Design the account dropdown button */
+.dropaccount {
+  position: relative;
+  display: inline-block;
+  left: 25%;
+}
+
+.Accbtn {
+  display: block;
+  background-color: #f1f1f1;
+  color: black;
+  padding: 11px;
+  font-size: 12px;
+  border: none;
+  cursor: pointer;
+}
+
+.Accbtn:hover, .Accbtn:focus {
+  background-color: #555;
+  color: white;
+}
+
+
+
+.Accdrop-content {
+  display: none;
+  position: absolute;
+  z-index: 1000;
+  top: 100%;
+  float: left;
+  margin: 2px 0 0;
+  background-color: #f1f1f1;
+  min-width: 212px;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.Accdrop-content .AccEle {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  float: left;
+  cursor: pointer;
+}
+
+
+.dropaccount .AccEle:hover {
+  background-color: #ddd;
+  width: 85%;
+}
+
+.show {
+  display: block;
+}
