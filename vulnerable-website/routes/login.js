@@ -19,7 +19,7 @@ router.post("/", (req, res) => {
         return console.error(err.message);
       }
     });
-    
+
     db.get(sql, [username, password], (err, user) => {
       if (err) {
         return console.error(err.message);
