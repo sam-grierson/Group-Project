@@ -1,36 +1,33 @@
 <!DOCTYPE html>
 <html lang="eng">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vulnerable Store</title>
-    <link rel="stylesheet" href="styles.css">
-  </head>
+  <%-include("templates/head.ejs")-%>
   <body>
-    <!-- Nav -->
+    <!--Nav bar-->
     <%-include("templates/nav.ejs")-%>
-    <!-- User Session Banner -->
-    <%if (name) {%>
-    <div class="user-banner">
-      <h1>Hi <%=name %></h1>
-    </div>
-    <%}%>
-    <!-- Products -->
-    <section class="products">
-      <div class="products-title">
-        <h2>Products</h2>
-      </div>
-      <div class="products-center">
-        <!-- Product -->
+
+    <!--Page Content-->
+    <div class="w3-main" style="margin-top: 85px">
+      <p style="margin-left:25px">Wanted to add here the total number of products</p>
+
+      <!--Prodcut grid-->
+      <div class="w3-row w3">
+        <!--Product-->
         <%for(var i = 0; i < products.length; i++) {%>
-          <article class="product">
-            <img src=<%=products[i].image%> class="product-image"/>
-            <h1><%=products[i].title%></h1>
-            <p class="price">£<%=products[i].price%></p>
-            <p><a class="add-cart-button" href="/add-cart/<%=products[i].id%>">Add to cart</a></p> 
-          </article>
+        <div class="w3-col l3 s6">
+          <div class="w3-container">
+            <div class="w3-display-container">
+              <img style="width:100%" src=<%=products[i].image%>>
+              <div class="w3-display-middle w3-display-hover">
+                <a class="w3-button w3-black" href="/add-cart/<%=products[i].id%>">Add to cart <i class="fa fa-shopping-cart"></i></a>
+              </div>
+            </div>
+            <p><%=products[i].title%><br><b>£<%=products[i].price%></b></p>
+          </div>
+        </div>
         <%}%>
       </div>
-    </section>
+    </div>
+
   </body>
+  <%-include("templates/footer.ejs")-%>
 </html>
