@@ -8,6 +8,7 @@ router.get("/", (req, res) => {
 
 
   res.render("checkout", {
+    cartCount: cart.totalQty,
     cartEmpty: cart.totalQty,
     loggedIn: req.session.loggedin,
   });
