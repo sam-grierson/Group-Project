@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="eng">
+  <!-- Head -->
+  <%-include("templates/head.ejs")-%>  
+  <body>
+    <!-- Nav -->
+    <%-include("templates/nav.ejs")-%>
+    <!-- Page Content -->
+    <div class="w3-main" style="margin-top: 85px">
+      <%if (cartEmpty == 0) {%>
+        <h1>Cart is Empty</h1>
+      <%} else {%>
+        <%if (loggedIn) {%>
+          <h1>Confirm details</h1>
+        <%} else {%>
+          <h1>Checkout as guest</h1>
+        <%}%>
+      <%}%>
+    </div>
+  </body>
+  <%-include("templates/footer.ejs")-%>
+</html>

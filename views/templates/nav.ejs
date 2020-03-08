@@ -19,12 +19,16 @@
               <a class="profile w3-button w3-bar-item"><i class="fa fa-user"></i></a>
             </form>
         </div>
-        <div class="w3-right w3-hide-small">
-
-            <a class="shopping-cart w3-button w3-bar-item" href="cart">
-              <i class="fa fa-shopping-cart"></i>
-            </a>
-
+        <div class="w3-right w3-hide-small">          
+          <%if (cartCount) {%>
+            <%if (cartCount == 0) {%>
+            <%} else {%>
+              <p class="w3-bar-item"><%=cartCount%></p>
+            <%}%>
+          <%}%>
+          <a class="shopping-cart w3-button w3-bar-item" href="/cart">
+            <i class="fa fa-shopping-cart"></i>
+          </a>          
         </div>
     </div>
     <div class="login_div" id="id01">

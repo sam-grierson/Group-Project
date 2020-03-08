@@ -6,13 +6,15 @@ const Cart = require("../models/cart");
 router.get("/", (req, res) => {
   if (!req.session.cart) {
     return res.render("cart", {
+      cartCount: false,
       products: false,
-      total: false
+      total: 0
     });
   }
 
   let cart = new Cart(req.session.cart)
   res.render("cart", {
+    cartCount: cart.totalQty,
     products: cart.generateArray(),
     total: cart.totalPrice
   });
@@ -25,6 +27,7 @@ router.get("/remove-cart/:id", (req, res) => {
   cart.removeItem(productId);
   req.session.cart = cart;
   res.render("cart", {
+    cartCount: cart.totalQty,
     products: cart.generateArray(),
     total: cart.totalPrice
   });
@@ -36,6 +39,7 @@ router.get("/empty-cart", (req, res) => {
   cart.clearCart();
   req.session.cart = cart;
   res.render("cart", {
+    cartCount: cart.totalQty,
     products: cart.generateArray(),
     total: cart.totalPrice
   });

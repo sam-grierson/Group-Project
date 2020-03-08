@@ -26,14 +26,14 @@
           <%}%>
         <%}%>
       </section>        
-      <%if (products) {%>
-        <div>
-            <h1>£<%=total%></h1>
-        </div>
-      <%}%>
-      <div>
+      <%if (total == 0) {%>
+        <h1>Cart is empty</h1>
+      <%} else {%>
+        <h1>£<%=total%></h1>        
         <a class="w3-button w3-black" href="/cart/empty-cart">Clear Cart</a>
-      </div>
+        <a class="w3-button w3-black" href="/checkout">Checkout</a>
+      <%}%>
     </div>
   </body>
+  <%-include("templates/footer.ejs")-%>
 </html>
