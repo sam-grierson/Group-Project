@@ -7,7 +7,6 @@ body {
     margin: 0;
     width: 100vw;
     height: 100vh;
-    background-color: grey;
 }
 /* ---- Nav Bars ---- */
 nav ul {
@@ -48,26 +47,26 @@ nav li a:hover {
     font-size: 2rem;
 }
 /* ---- Login Form ---- */
-.login {
+.login1 {
     width: 400px;
     height: 310px;
     margin: 0 auto;
     background-color: white;
     text-align: center;
 }
-.login h1 {
+.login1 h1 {
     color: #535b63;
     font-size: 24px;
     padding: 20px 0 20px 0;
 }
-.login input[type="password"],
-.login input[type="text"] {
+.login1 input[type="password"],
+.login1 input[type="text"] {
     width: 80%;
     padding: 15px;
     border: 1px solid grey;
     margin-bottom: 15px;
 }
-.login input[type="submit"] {
+.login1 input[type="submit"] {
     width: 80%;
     padding: 15px;
     background-color: #535b63;
