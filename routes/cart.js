@@ -26,11 +26,7 @@ router.get("/remove-cart/:id", (req, res) => {
 
   cart.removeItem(productId);
   req.session.cart = cart;
-  res.render("cart", {
-    cartCount: cart.totalQty,
-    products: cart.generateArray(),
-    total: cart.totalPrice
-  });
+  res.redirect("/cart")
 });
 
 router.get("/empty-cart", (req, res) => {
@@ -38,11 +34,7 @@ router.get("/empty-cart", (req, res) => {
 
   cart.clearCart();
   req.session.cart = cart;
-  res.render("cart", {
-    cartCount: cart.totalQty,
-    products: cart.generateArray(),
-    total: cart.totalPrice
-  });
+  res.redirect("/cart")
 });
 
 module.exports = router;
