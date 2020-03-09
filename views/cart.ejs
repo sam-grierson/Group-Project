@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="eng">
   <!-- Head -->
-  <%-include("templates/head.ejs")-%>  
+  <%-include("templates/head.ejs")-%>
   <body>
     <!-- Nav -->
     <%-include("templates/nav.ejs")-%>
-    <!-- Page Content -->
+    <!--Page Content-->
     <div class="w3-main" style="margin-top: 85px">
       <!-- Product Grid -->
       <div class="w3-row w3">
@@ -29,7 +29,7 @@
       <%if (total == 0) {%>
         <h1>Cart is empty</h1>
       <%} else {%>
-        <h1>£<%=total%></h1>        
+        <h1>£<%=total%></h1>
         <a class="w3-button w3-black" href="/cart/empty-cart">Clear Cart</a>
         <a class="w3-button w3-black" href="/checkout">Checkout</a>
       <%}%>
