@@ -1,3 +1,4 @@
+const sqlite3 = require("sqlite3").verbose();
 const express = require("express");
 const sqlite3 = require("sqlite3").verbose();
 const router = express.Router();
@@ -26,6 +27,7 @@ router.get("/", (req, res) => {
   });
 });
 
+// User checkout payments
 // let db = new sqlite3.Database("db/database.db");
 // let sql = `INSERT INTO user(username,firstname,surname,email,phoneNo,address,cardName,cardNo,expMon,expYr) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`
 // db.run(sql, [username,firstName,surname,email,phoneNo,address,cardName,cardNo,expMon,expYr], (err) => {
