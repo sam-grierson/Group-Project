@@ -6,13 +6,23 @@ const Cart = require("../models/cart")
 
 router.get("/", (req, res) => {
   let cart = new Cart(req.session.cart ? req.session.cart : {});
+  let session = req.session
+
+  function getUser(session) {
+    if (session.loggedin === true) {
+      return req.session.username;
+    } else {
+      return false;
+    }
+  }
 
   res.render("checkout", {
     cartCount: cart.totalQty,
     cartEmpty: cart.totalQty,
     loggedIn: req.session.loggedin,
     total: cart.totalPrice,
-    paymentSub: null
+    paymentSub: null,
+    name: getUser(session)
   });
 });
 
@@ -24,7 +34,7 @@ router.get("/", (req, res) => {
 //   }
 // });
 
-// Guest checkout payments go into the void
+// Guest checkout payments
 router.post("/", (req, res) => {
   let cart = new Cart(req.session.cart ? req.session.cart : {});
 
@@ -42,13 +52,15 @@ router.post("/", (req, res) => {
 
   cart.clearCart()
   req.session.cart = cart
-  
+
   res.render("checkout", {
     cartCount: cart.totalQty,
     cartEmpty: cart.totalQty,
     loggedIn: req.session.loggedin,
     total: cart.totalPrice,
-    paymentSub: "Payment Successful!"
+    paymentSub: true,
+    name: null,
+    email: email
   });
 });
 
