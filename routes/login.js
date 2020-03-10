@@ -3,9 +3,10 @@ const express = require("express");
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  res.render("login", {
+  res.render("index", {
     user: false
   });
+  console.log("try again");
 });
 
 router.post("/", (req, res) => {
@@ -24,9 +25,8 @@ router.post("/", (req, res) => {
       if (err) {
         return console.error(err.message);
       } else if (!user) {
-        res.render("login", {
-          user: true
-        });
+        res.redirect('/')
+        console.log("falid to login");
       } if (username == "Admin") {
         req.session.isadmin = true;
         req.session.loggedin = true;
@@ -36,6 +36,7 @@ router.post("/", (req, res) => {
         req.session.loggedin = true;
         req.session.username = username;
         res.redirect("/");
+        console.log("Loged in");
       }
     });
     db.close((err) => {
@@ -46,9 +47,18 @@ router.post("/", (req, res) => {
   }
 });
 
-router.get('/logout', function(req, res, next){
-	req.logout();
-	res.redirect('/');
+router.get("/logout", function(req, res){
+  if (req.session) {
+    // delete session object
+    req.session.destroy(function(err) {
+      if(err) {
+        return next(err);
+      } else {
+        res.redirect('/');
+        console.log("Bey");
+      }
+    });
+  }
 });
 
 module.exports = router;
