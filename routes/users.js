@@ -2,6 +2,8 @@ const sqlite3 = require("sqlite3").verbose();
 const express = require("express");
 const router = express.Router();
 
+const Cart = require("../models/cart");
+
 /*router.get("/", (req, res) => {
   res.render("index", {
     user: false
@@ -97,6 +99,41 @@ router.get("/logout", function(req, res){
       }
     });
   }
+});
+
+router.get('/profile', function(req,res){
+  let db = new sqlite3.Database("db/database.db");
+  let session = req.session;
+  let cart = new Cart(req.session.cart ? req.session.cart : {});
+  let userId = getUser(session);
+  let sql = `SELECT * from users WHERE username = '${userId}'`;
+
+
+  function getUser(session) {
+    if (session.loggedin === true) {
+      return req.session.username;
+    } else {
+      return false;
+    }
+  }
+  db.all(sql, (err,result) => {
+    console.log(result);
+    if (err) {
+      console.error(err);
+      return res.redirect('/');
+    } else {
+      res.render('profile', {
+        cartCount: cart.totalQty,
+        products: cart.generateArray(),
+        total: cart.totalPrice,
+        name: getUser(session),
+        username: result[0].username,
+        email: result[0].Email,
+        pass: result[0].password
+      });
+    }
+  });
+
 });
 
 module.exports = router;
