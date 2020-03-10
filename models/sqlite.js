@@ -89,7 +89,6 @@ module.exports = function Sqlite() {
     let sql = `SELECT * from users WHERE username = ?`;
 
     db.get(sql, [userId], (err, row) => {
-      console.log(row);
       if (err) {
         console.error(err);
         return callback(err);
