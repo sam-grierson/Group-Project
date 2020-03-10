@@ -4,8 +4,9 @@ const router = express.Router();
 
 router.get("/", (req, res) => {
   res.render("index", {
-    name: false
+    user: false
   });
+  console.log("try again");
 });
 
 router.post("/", (req, res) => {
@@ -23,10 +24,11 @@ router.post("/", (req, res) => {
     db.get(sql, [username, password], (err, user) => {
       if (err) {
         return console.error(err.message);
-      } else if (!user) {
+      } else if (!user) {        
         res.render("index", {
-          name: true
+          user: true
         });
+        console.log("falid to login");
       } if (username == "Admin") {
         req.session.isadmin = true;
         req.session.loggedin = true;
@@ -36,6 +38,7 @@ router.post("/", (req, res) => {
         req.session.loggedin = true;
         req.session.username = username;
         res.redirect("/");
+        console.log("Loged in");
       }
     });
     db.close((err) => {
@@ -53,7 +56,8 @@ router.get("/logout", function(req, res){
       if(err) {
         return next(err);
       } else {
-        return res.redirect('/');
+        res.redirect('/');
+        console.log("Bey");
       }
     });
   }
