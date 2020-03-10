@@ -24,10 +24,8 @@ router.post("/", (req, res) => {
     db.get(sql, [username, password], (err, user) => {
       if (err) {
         return console.error(err.message);
-      } else if (!user) {        
-        res.render("index", {
-          user: true
-        });
+      } else if (!user) {
+        res.redirect('/')
         console.log("falid to login");
       } if (username == "Admin") {
         req.session.isadmin = true;
