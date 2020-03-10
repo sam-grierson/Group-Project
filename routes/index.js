@@ -2,11 +2,11 @@ const sqlite3 = require("sqlite3").verbose();
 const express = require("express");
 const router = express.Router();
 
-const Cart = require("../models/cart")
+const Cart = require("../models/cart");
+const Sqlite = require("../models/sqlite");
 
-router.get("/", (req, res) => {
-  let db = new sqlite3.Database("db/database.db"); // path could become an issue when run on windows?
-  let sql = `SELECT * FROM products`;
+router.get("/", (req, res) => {  
+  let sqlite = new Sqlite();
   let session = req.session
   let cart = new Cart(req.session.cart ? req.session.cart : {});
 
@@ -16,36 +16,24 @@ router.get("/", (req, res) => {
     } else {
       return false;
     }
-  }
+  };
 
-  db.all(sql, (err, products) => {
-    if (err) {
-      console.error(err);
-    } else {
+  sqlite.getProducts((err, products) => {
       res.render("index", {
-        cartCount: cart.totalQty,
-        name: getUser(session),
-        products: products
-      });
-    }
+      cartCount: cart.totalQty,
+      name: getUser(session),
+      products: products
+    });
   });
-
-  db.close((err) => {
-    if (err) {
-      return console.error(err.message)
-    }
-  })
 });
 
 router.get("/add-cart/:id", (req, res) => {
-  let db = new sqlite3.Database("db/database.db");
-  let sql = `SELECT * FROM products WHERE id = ?`;
   let productId = req.params.id;
+  let sqlite = new Sqlite();
 
-  db.get(sql, [productId], (err, product) => {
+  sqlite.addToCart(productId,(err, product) => {
     if (err) {
-      console.error(err);
-      return res.redirect("/");
+      res.redirect("/");
     } else {
       let cart = new Cart(req.session.cart ? req.session.cart : {});
       cart.add(product, product.id);
