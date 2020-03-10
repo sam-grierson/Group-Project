@@ -3,7 +3,6 @@ const router = express.Router();
 
 
 const Cart = require("../models/cart");
-
 const Sqlite = require("../models/sqlite");
 
 
@@ -83,11 +82,11 @@ router.get("/logout", function(req, res){
 });
 
 router.get('/profile', function(req,res){
-  let db = new sqlite3.Database("db/database.db");
+  let sqlite = new Sqlite();
   let session = req.session;
   let cart = new Cart(req.session.cart ? req.session.cart : {});
   let userId = getUser(session);
-  let sql = `SELECT * from users WHERE username = '${userId}'`;
+  
 
 
   function getUser(session) {
@@ -97,8 +96,8 @@ router.get('/profile', function(req,res){
       return false;
     }
   }
-  db.all(sql, (err,result) => {
-    console.log(result);
+  sqlite.getProfile(userId, (err,row) => {
+
     if (err) {
       console.error(err);
       return res.redirect('/');
@@ -108,9 +107,9 @@ router.get('/profile', function(req,res){
         products: cart.generateArray(),
         total: cart.totalPrice,
         name: getUser(session),
-        username: result[0].username,
-        email: result[0].Email,
-        pass: result[0].password
+        username: row.username,
+        email: row.Email,
+        pass: row.password
       });
     }
   });
