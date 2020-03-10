@@ -24,7 +24,7 @@
             </i></a>
             <div class="w3-dropdown-content w3-bar-block w3-card-5" style="right:0">
               <%if (name) {%>
-                <a href="login/logout" class="w3-bar-item w3-button">Logout</a>
+                <a href="/users/logout" class="w3-bar-item w3-button">Logout</a>
               <%} else {%>
                 <a onclick="document.getElementById('id01').style.display='block'" class="w3-bar-item w3-button">Login</a>
                 <a onclick="document.getElementById('id01').style.display='none'; document.getElementById('id02').style.display='block'" class="w3-bar-item w3-button">Register</a>
@@ -50,7 +50,7 @@
     </div>
     <div class="login_div" id="id01">
       <span class="close" onclick="document.getElementById('id01').style.display='none'" title="Close Modal">&times;</span>
-        <form class="login-content animatelog" method="POST" action="/login">
+        <form class="login-content animatelog" method="POST" action="/users/login">
             <div class="logcontainer">
               <label for="uname"> <b>Username</b></label>
               <input class="login" type="text" placeholder="Enter Username" name="username" required id="username">
@@ -67,7 +67,7 @@
     </div>
     <div class="signup_div" id="id02">
       <span class="close1" onclick="document.getElementById('id02').style.display='none'" title="Close Modal1">&times;</span>
-        <form class="signup-content animatesign" method="POST" action="register">
+        <form class="signup-content animatesign" method="POST" action="/users/register">
             <div class="signcontainer">
                 <h1>Sign up</h1>
                 <p>Please fill in this form to create an account.</p>
