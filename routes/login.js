@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  res.render("login", {
-    user: false
+  res.render("index", {
+    name: false
   });
 });
 
@@ -24,8 +24,8 @@ router.post("/", (req, res) => {
       if (err) {
         return console.error(err.message);
       } else if (!user) {
-        res.render("login", {
-          user: true
+        res.render("index", {
+          name: true
         });
       } else {
         req.session.loggedin = true;
@@ -41,9 +41,17 @@ router.post("/", (req, res) => {
   }
 });
 
-router.get('/logout', function(req, res, next){
-	req.logout();
-	res.redirect('/');
+router.get("/logout", function(req, res){
+  if (req.session) {
+    // delete session object
+    req.session.destroy(function(err) {
+      if(err) {
+        return next(err);
+      } else {
+        return res.redirect('/');
+      }
+    });
+  }
 });
 
 module.exports = router;
