@@ -9,7 +9,6 @@ const db = new sqlite3.Database(dbPath);
 
 const indexRoute = require("./routes/index");
 const usersRoute = require("./routes/users");
-const registerRoute = require("./routes/register");
 const cartRoute = require("./routes/cart");
 const checkoutRoute = require("./routes/checkout");
 
@@ -41,7 +40,6 @@ app.use((req, res, next) => {
 
 app.use("/", indexRoute);
 app.use("/users", usersRoute);
-//app.use("/register", registerRoute); commented for later
 app.use("/cart", cartRoute);
 app.use("/checkout", checkoutRoute);
 

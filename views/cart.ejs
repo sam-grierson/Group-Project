@@ -7,7 +7,6 @@
     <%-include("templates/nav.ejs")-%>
     <!--Page Content-->
     <div class="w3-main" style="margin-top: 85px">
-
       <!--Prodcut grid-->
       <div class="w3-row w3">
         <!--Product-->
@@ -26,8 +25,7 @@
           </div>
           <%}%>
         <%}%>
-      </div>
-      
+      </div>      
       <%if (total == 0) {%>
         <h1>Cart is empty</h1>
       <%} else {%>
@@ -35,7 +33,7 @@
         <a class="w3-button w3-black" href="/cart/empty-cart" style="margin-left:25px">Clear Cart</a>
         <a class="w3-button w3-black" href="/checkout" style="margin-left:25px">Checkout</a>
       <%}%>
-    </div>
-  </body>
+      </div> 
+    </body>
   <%-include("templates/footer.ejs")-%>
 </html>
