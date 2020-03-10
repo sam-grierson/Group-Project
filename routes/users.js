@@ -1,6 +1,7 @@
-const sqlite3 = require("sqlite3").verbose();
 const express = require("express");
 const router = express.Router();
+
+const Sqlite = require("../models/sqlite");
 
 /*router.get("/", (req, res) => {
   res.render("index", {
@@ -11,59 +12,42 @@ const router = express.Router();
 
 // register route
 router.post("/register", (req, res) => {
-  let id = 1
+  let sqlite = new Sqlite();
   let username = req.body.username;
   let email = req.body.email;
   let password = req.body.password;
   let passwordTwo = req.body.passwordTwo;
-  let sql = `INSERT INTO users(username,password,email) VALUES(?, ?, ?)`
-  //^changed to make the primary key AUTOINCREMENT function work properly, now id is autoincremented to
-  // one per user, making all id's unique.
 
   if (username && email && password && passwordTwo) {
     if (password !== passwordTwo) {
       res.redirect('/');
     } else {
-      let db = new sqlite3.Database("db/database.db", (err) => {
-        if (err) {
-          return console.error(err.code);
+      sqlite.registerUser(username, password, email, (err, result) => {
+        if (err.message == "SQLITE_CONSTRAINT: UNIQUE constraint failed: users.username") {
+          return console.log("duplicate username error");
+        } else if (err) {
+          res.redirect("/")
+        } else {
+          res.redirect("/");
         }
       });
-
-      db.run(sql, [username,password,email], (err) => {
-        if (err.message == 'SQLITE_CONSTRAINT: UNIQUE constraint failed: users.username') {
-          return console.log('catching the error');
-
-        } else if (err){
-          return console.error(err.message);
-        }
-      });
-      res.redirect('/');
     }
   }
 });
 
 // login route
 router.post("/login", (req, res) => {
+  let sqlite = new Sqlite();
   let username = req.body.username;
   let password = req.body.password;
-  let sql = `SELECT * FROM users WHERE username = ? AND password = ?`;
 
   if (username && password) {
-    let db = new sqlite3.Database("db/database.db", (err) => {
+    sqlite.loginUser(username, password, (err, row) => {
       if (err) {
-        return console.error(err.message);
-      }
-    });
-
-    db.get(sql, [username, password], (err, rows) => {
-      if (err) {
-        return console.error(err.message);
-      } else if (!rows) {
-        res.render('index', {
-          // we have to pass the all variables
-        });
-        return console.log("falid to login");
+        res.redirect("/");
+      } else if (!row) {
+        console.log("failed to login");
+        res.redirect("/")
       } else if (username == "Admin") {
         req.session.isadmin = true;
         req.session.loggedin = true;
@@ -73,16 +57,11 @@ router.post("/login", (req, res) => {
         req.session.loggedin = true;
         req.session.username = username;
         res.redirect("/");
-        console.log("Loged in");
-      }
-    });
-    db.close((err) => {
-      if (err) {
-        return console.error(err.message)
-      }
+        console.log("Logged in");
+      }   
     });
   }
-});
+}); 
 
 // logout route
 router.get("/logout", function(req, res){
@@ -93,7 +72,7 @@ router.get("/logout", function(req, res){
         return next(err);
       } else {
         res.redirect('/');
-        console.log("Bey");
+        console.log("Bye");
       }
     });
   }

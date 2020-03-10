@@ -1,8 +1,8 @@
 const express = require("express");
-const sqlite3 = require("sqlite3").verbose();
 const router = express.Router();
 
-const Cart = require("../models/cart")
+const Cart = require("../models/cart");
+const Sqlite = require("../models/sqlite");
 
 router.get("/", (req, res) => {
   let cart = new Cart(req.session.cart ? req.session.cart : {});
