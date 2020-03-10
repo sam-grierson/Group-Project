@@ -1,0 +1,89 @@
+<div class="w3-top">
+    <div class="w3-bar w3-white w3-padding w3-card" style="letter-spacing:4px;">
+      <a class="w3-bar-item w3-button" href="/">Vulnerable Store</a>
+        <!-- Right-sided navbar links. Hide them on small screens-->
+        <div class="w3-left w3-hide-medium">
+          <a class="w3-bar-item w3-button" onclick="document.getElementById('id01').style.display='block'">login</a>
+          <a class="w3-bar-item w3-button" href="#contact">Contact</a>
+        </div>
+        <div class="w3-middle w3-hide-medium">
+            <form method="POST" action="/search">
+              <button class="w3-bar-item w3-button" type="submit">
+                <i class="fa fa-search"></i>
+              </button>
+              <input class="w3-bar-item w3-border w3-round-large" type="text" placeholder="Search..." name="productname">
+            </form>
+        </div>
+        <div class="w3-right w3-hide-small">
+            <form>
+              <a class="profile w3-button w3-bar-item"><i class="fa fa-user">
+                <%if (name) { %>
+                  <%=name %>
+                <%}%>
+              </i></a>
+            </form>
+        </div>
+        <div class="w3-right w3-hide-small">
+
+          <a class="shopping-cart w3-button w3-bar-item" href="cart">
+            <i class="fa fa-shopping-cart">
+              <%if (cartCount) {%>
+                <%if (cartCount == 0) {%>
+                <%} else {%>
+                  <%=cartCount%>
+                <%}%>
+              <%}%>
+            </i>
+          </a>
+        </div>
+    </div>
+    <div class="login_div" id="id01">
+      <span class="close" onclick="document.getElementById('id01').style.display='none'" title="Close Modal">&times;</span>
+        <form class="login-content animatelog" method="POST" action="/login">
+            <div class="logcontainer">
+              <label for="uname"> <b>Username</b></label>
+              <input class="login" type="text" placeholder="Enter Username" name="username" required id="username">
+              <label for="psw"> <b>Password</b></label>
+              <input class="login" type="password" placeholder="Enter Password" name="password" required id="password">
+              <button class="bb" type="submit">login</button>
+              <label><input type="checkbox" checked name="remember"> Remember me</label>
+            </div>
+            <div class="logcontainer" style="background-color:#f1f1f1;">
+              <button class="cancelbtn" type="button" onclick="document.getElementById('id01').style.display='none'">Cancel</button>
+              <span class="psw">Forget <a href="#" id="forget">Password?</a> or <a href="#" id="signupbt" onclick="document.getElementById('id01').style.display='none'; document.getElementById('id02').style.display='block'">Sign up</a></span>
+            </div>
+        </form>
+    </div>
+    <div class="signup_div" id="id02">
+      <span class="close1" onclick="document.getElementById('id02').style.display='none'" title="Close Modal1">&times;</span>
+        <form class="signup-content animatesign" method="POST" action="register">
+            <div class="signcontainer">
+                <h1>Sign up</h1>
+                <p>Please fill in this form to create an account.</p>
+                <hr id="hrsign">
+                <label for="username"><b>Username</b></label>
+                <input class="signup" type="text" placeholder="Enter Username" name="username" required>
+                <!--<label for="1name"><b>First Name</b></label>
+                <input class="signup" type="text" placeholder="Enter your Firstname" name="1name" required>
+                <label for="2name"><b>Surname</b></label>
+                <input class="signup" type="text" placeholder="Enter Surname" name="2name" required>-->
+                <label for="email"><b>Email</b></label>
+                <input class="signup" type="text" placeholder="Enter Email" name="email" required>
+                <!--<label for="phoneNo"><b>Phone Number</b></label>
+                <input class="signup" type="text" placeholder="Enter Phone Number" name="phoneNo" required>
+                <label for="address"><b>Address</b></label>
+                <input class="signup" type="text" placeholder="Enter your Home Address" name="address" required>-->
+                <label for="psw1"><b>Password</b></label>
+                <input class="signup" type="password" placeholder="Enter Password" name="password" required>
+                <label for="psw-repeat"><b>Repeat Password</b></label>
+                <input class="signup" type="password" placeholder="Repeat Password" name="passwordTwo" required>
+                <label><input type="checkbox" checked name="remember" style="margin-bottom:15px;"> Remember me</label>
+                <p>By creating an account you agree to our <a href="#" style="color:dodgerblue;">Terms & Policy</a>.</p>
+                <div class="clearfix">
+                  <button class="cancelbtn1" type="button" onclick="document.getElementById('id02').style.display='none'">Cancel</button>
+                  <button class="signupbtn" type="submit">Sign Up</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

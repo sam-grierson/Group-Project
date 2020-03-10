@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="eng">
+  <!-- Head -->
+  <%-include("templates/head.ejs")-%>
+  <body>
+    <!-- Nav -->
+    <%-include("templates/nav.ejs")-%>
+    <!--Page Content-->
+    <div class="w3-main" style="margin-top: 85px">
+<<<<<<< HEAD
+      <!-- Product Grid -->
+      <div class="w3-row w3">
+        <!-- Product -->
+        <%if (products) {%>
+          <%for(var i = 0; i < products.length; i++) {%>
+            <div class="w3-col 13 s6">
+              <div class="w3-container">
+                <div class="w3-display-container">
+                  <img style="width:100%" src=<%=products[i].item.image%>>
+                  <div class="w3-display-middle w3-display-hover">
+                    <a class="w3-button w3-black" href="/cart/remove-cart/<%=products[i].item.id%>">Remove From Cart</a>
+                  </div>
+                </div>  
+                <p><%=products[i].item.title%><br><b>£<%=products[i].Price%></b><p><%=products[i].qty%></p></p>
+              </div>
+            </div>
+          <%}%>
+        <%}%>
+        </div>        
+=======
+
+
+      <!--Prodcut grid-->
+      <div class="w3-row w3">
+        <!--Product-->
+        <%if (products) {%>
+          <%for(var i = 0; i < products.length; i++) {%>
+          <div class="w3-col l3 s6">
+            <div class="w3-container">
+              <div class="w3-display-container">
+                <img style="width:100%" src=<%=products[i].item.image%>>
+                <div class="w3-display-middle w3-display-hover">
+                  <a class="w3-button w3-black" href="/cart/remove-cart/<%=products[i].item.id%>">remove item <i class="fa fa-shopping-cart"></i></a>
+                </div>
+              </div>
+              <p><%=products[i].item.title%><br><b>£<%=products[i].Price%></b><p><%=products[i].qty%></p></p>
+            </div>
+          </div>
+          <%}%>
+        <%}%>
+      </section>
+>>>>>>> 0cdce831a4e24ca2f8f19496eb6e331da7d4d547
+      <%if (total == 0) {%>
+        <h1>Cart is empty</h1>
+      <%} else {%>
+        <h1>£<%=total%></h1>
+        <a class="w3-button w3-black" href="/cart/empty-cart">Clear Cart</a>
+        <a class="w3-button w3-black" href="/checkout">Checkout</a>
+      <%}%>
+    </div>
+  </body>
+  <%-include("templates/footer.ejs")-%>
+</html>
