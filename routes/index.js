@@ -1,7 +1,6 @@
 const sqlite3 = require("sqlite3").verbose();
 const express = require("express");
 const router = express.Router();
-
 const Cart = require("../models/cart")
 
 router.get("/", (req, res) => {
@@ -37,10 +36,42 @@ router.get("/", (req, res) => {
   })
 });
 
+router.post("/search", (req, res) => { // function  for searching database
+  let db = new sqlite3.Database("db/database.db");
+  let productId = req.body.productname
+  let sql = `SELECT * from products WHERE title = '${productId}'`; // this makes the query vounerable to sql injections
+  let session = req.session
+  let cart = new Cart(req.session.cart ? req.session.cart : {});
+  console.log(sql)
+
+ function getUser(session) { //needed for compatibility with render index
+   if (session.loggedin === true) {
+     return req.session.username;
+   } else {
+     return false;
+   }
+ }
+
+ db.all(sql , (err,result) => {
+   if (err) {
+     console.error(err);
+     return res.redirect("/");
+   }else{
+     res.render("index",{ // unable to get the additional tables to show up
+       cartCount: cart.totalQty,
+       name: getUser(session),
+       products: result
+     });
+   }
+ });
+});
+
+
 router.get("/add-cart/:id", (req, res) => {
   let db = new sqlite3.Database("db/database.db");
   let sql = `SELECT * FROM products WHERE id = ?`;
   let productId = req.params.id;
+
 
   db.get(sql, [productId], (err, product) => {
     if (err) {
