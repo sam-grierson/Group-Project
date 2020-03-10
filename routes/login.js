@@ -27,6 +27,11 @@ router.post("/", (req, res) => {
         res.render("login", {
           user: true
         });
+      } if (username == "Admin") {
+        req.session.isadmin = true;
+        req.session.loggedin = true;
+        req.session.username = username;
+        res.redirect("/");
       } else {
         req.session.loggedin = true;
         req.session.username = username;
