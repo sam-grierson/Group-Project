@@ -6,7 +6,7 @@ module.exports = function Sqlite() {
     }
   });
 
-  this.getProducts = function(callback) {  
+  this.getProducts = function(callback) {
     let sql = `SELECT * FROM products`;
 
     db.all(sql, (err, products) => {
@@ -14,14 +14,14 @@ module.exports = function Sqlite() {
         console.error(err);
         return callback(err);
       }
-      return callback(null, products);      
+      return callback(null, products);
     });
 
     db.close((err) => {
       if (err) {
         return console.error(err)
       }
-    });  
+    });
   };
 
   this.addToCart = function(id, callback) {
@@ -42,7 +42,7 @@ module.exports = function Sqlite() {
       }
     });
   };
-  
+
   this.registerUser = function(username, password, email, callback) {
     let sql = `INSERT INTO users(username,password,email) VALUES(?, ?, ?)`;
 
@@ -55,7 +55,7 @@ module.exports = function Sqlite() {
         return callback(err);
       } else {
         // return true for successful database entry
-        return callback(null, result = true); 
+        return callback(null, result = true);
       }
     });
 
@@ -70,6 +70,25 @@ module.exports = function Sqlite() {
     let sql = `SELECT * FROM users WHERE username = ? AND password = ?`;
 
     db.get(sql, [username, password], (err, row) => {
+      if (err) {
+        console.error(err);
+        return callback(err);
+      } else {
+        return callback(null, row);
+      }
+    });
+
+    db.close((err) => {
+      if (err) {
+        return console.error(err);
+      }
+    });
+  };
+
+  this.getProfile = function (userId, callback){
+    let sql = `SELECT * from users WHERE username = ?`;
+
+    db.get(sql, [userId], (err, row) => {
       if (err) {
         console.error(err);
         return callback(err);

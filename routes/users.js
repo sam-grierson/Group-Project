@@ -1,7 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
+
+const Cart = require("../models/cart");
 const Sqlite = require("../models/sqlite");
+
 
 /*router.get("/", (req, res) => {
   res.render("index", {
@@ -58,10 +61,10 @@ router.post("/login", (req, res) => {
         req.session.username = username;
         res.redirect("/");
         console.log("Logged in");
-      }   
+      }
     });
   }
-}); 
+});
 
 // logout route
 router.get("/logout", function(req, res){
@@ -76,6 +79,41 @@ router.get("/logout", function(req, res){
       }
     });
   }
+});
+
+router.get('/profile', function(req,res){
+  let sqlite = new Sqlite();
+  let session = req.session;
+  let cart = new Cart(req.session.cart ? req.session.cart : {});
+  let userId = getUser(session);
+  
+
+
+  function getUser(session) {
+    if (session.loggedin === true) {
+      return req.session.username;
+    } else {
+      return false;
+    }
+  }
+  sqlite.getProfile(userId, (err,row) => {
+
+    if (err) {
+      console.error(err);
+      return res.redirect('/');
+    } else {
+      res.render('profile', {
+        cartCount: cart.totalQty,
+        products: cart.generateArray(),
+        total: cart.totalPrice,
+        name: getUser(session),
+        username: row.username,
+        email: row.Email,
+        pass: row.password
+      });
+    }
+  });
+
 });
 
 module.exports = router;
