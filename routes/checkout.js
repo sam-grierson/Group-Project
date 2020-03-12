@@ -22,7 +22,8 @@ router.get("/", (req, res) => {
     loggedIn: req.session.loggedin,
     total: cart.totalPrice,
     paymentSub: null,
-    name: getUser(session)
+    name: getUser(session),
+    logSucsess: true
   });
 });
 
