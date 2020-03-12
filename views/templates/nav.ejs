@@ -49,23 +49,45 @@
           </a>
         </div>
     </div>
-    <div class="login_div" id="id01">
-      <span class="close" onclick="document.getElementById('id01').style.display='none'" title="Close Modal">&times;</span>
-        <form class="login-content animatelog" method="POST" action="/users/login">
-            <div class="logcontainer">
-              <label for="uname"> <b>Username</b></label>
-              <input class="login" type="text" placeholder="Enter Username" name="username" required id="username">
-              <label for="psw"> <b>Password</b></label>
-              <input class="login" type="password" placeholder="Enter Password" name="password" required id="password">
-              <button class="bb" type="submit">login</button>
-              <label><input type="checkbox" checked name="remember"> Remember me</label>
-            </div>
-            <div class="logcontainer" style="background-color:#f1f1f1;">
-              <button class="cancelbtn" type="button" onclick="document.getElementById('id01').style.display='none'">Cancel</button>
-              <span class="psw">Forget <a href="#" id="forget">Password?</a> or <a href="#" id="signupbt" onclick="document.getElementById('id01').style.display='none'; document.getElementById('id02').style.display='block'">Sign up</a></span>
-            </div>
-        </form>
-    </div>
+    <%if (!logSucsess) {%>
+      <div class="login_div" style="display:block" id="id01">
+        <span class="close" onclick="document.getElementById('id01').style.display='none'" title="Close Modal">&times;</span>
+          <form class="login-content animatelog" method="POST" action="/users/login">
+              <div class="logcontainer">
+                <p style="color:red">Invalid Username/Password</p>
+                <label for="uname"> <b>Username</b></label>
+                <input class="login" type="text" placeholder="Enter Username" name="username" required id="username">
+                <label for="psw"> <b>Password</b></label>
+                <input class="login" type="password" placeholder="Enter Password" name="password" required id="password">
+                <button class="bb" type="submit">login</button>
+                <label><input type="checkbox" checked name="remember"> Remember me</label>
+              </div>
+              <div class="logcontainer" style="background-color:#f1f1f1;">
+                <button class="cancelbtn" type="button" onclick="document.getElementById('id01').style.display='none'">Cancel</button>
+                <span class="psw">Forget <a href="#" id="forget">Password?</a> or <a href="#" id="signupbt" onclick="document.getElementById('id01').style.display='none'; document.getElementById('id02').style.display='block'">Sign up</a></span>
+              </div>
+          </form>
+      </div>
+    <%} else {%>
+      <div class="login_div" id="id01">
+        <span class="close" onclick="document.getElementById('id01').style.display='none'" title="Close Modal">&times;</span>
+          <form class="login-content animatelog" method="POST" action="/users/login">
+              <div class="logcontainer">
+                <label for="uname"> <b>Username</b></label>
+                <input class="login" type="text" placeholder="Enter Username" name="username" required id="username">
+                <label for="psw"> <b>Password</b></label>
+                <input class="login" type="password" placeholder="Enter Password" name="password" required id="password">
+                <button class="bb" type="submit">login</button>
+                <label><input type="checkbox" checked name="remember"> Remember me</label>
+              </div>
+              <div class="logcontainer" style="background-color:#f1f1f1;">
+                <button class="cancelbtn" type="button" onclick="document.getElementById('id01').style.display='none'">Cancel</button>
+                <span class="psw">Forget <a href="#" id="forget">Password?</a> or <a href="#" id="signupbt" onclick="document.getElementById('id01').style.display='none'; document.getElementById('id02').style.display='block'">Sign up</a></span>
+              </div>
+          </form>
+      </div>
+    <%}%>
+
     <div class="signup_div" id="id02">
       <span class="close1" onclick="document.getElementById('id02').style.display='none'" title="Close Modal1">&times;</span>
         <form class="signup-content animatesign" method="POST" action="/users/register">
