@@ -84,4 +84,23 @@ module.exports = function Sqlite() {
       }
     });
   };
+
+  this.getUserDetails = function(username, callback) {
+    let sql = `SELECT * FROM users WHERE username = ?`;
+
+    db.get(sql, [username], (err, row) => {
+      if (err) {
+        console.error(err);
+        return callback(err);
+      } else {
+        return callback(null, row);
+      }
+    });
+
+    db.close((err) => {
+      if (err) {
+        return console.error(err);
+      }
+    });
+  }
 };
