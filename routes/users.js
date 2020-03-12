@@ -86,7 +86,7 @@ router.get('/profile', function(req,res){
   let session = req.session;
   let cart = new Cart(req.session.cart ? req.session.cart : {});
   let userId = getUser(session);
-  
+
 
 
   function getUser(session) {
@@ -109,11 +109,39 @@ router.get('/profile', function(req,res){
         name: getUser(session),
         username: row.username,
         email: row.Email,
-        pass: row.password
+        pass: row.password,
+        edit: false,
       });
     }
   });
+});
 
+router.post('/update-profile', (req, res) => {
+  let sqlite = new Sqlite();
+  let session = req.session;
+  let cart = new Cart(req.session.cart ? req.session.cart : {});
+  let userId = getUser(session);
+  let email = req.body.email;
+
+
+  function getUser(session) {
+    if (session.loggedin === true) {
+      return req.session.username;
+    } else {
+      return false;
+    }
+  }
+
+  sqlite.updateProfile(req.session.username,email, (err,row) => {
+    console.log(row);
+    if (err) {
+      console.error(err);
+      return res.redirect('/');
+    } else {
+      console.log('here');
+      res.redirect('/');
+    }
+  });
 });
 
 module.exports = router;
