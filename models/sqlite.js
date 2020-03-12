@@ -103,4 +103,23 @@ module.exports = function Sqlite() {
       }
     });
   };
+
+  this.updateProfile = function(username, email, callback){
+    let sql = `UPDATE users SET email = ? WHERE username = ?`;
+
+    db.get(sql, [email,username], (err, row) => {
+      if (err) {
+        console.error(err);
+        return callback(err);
+      } else {
+        return callback(null, row);
+      }
+    });
+
+    db.close((err) => {
+      if (err) {
+        return console.error(err);
+      }
+    });
+  };
 };
