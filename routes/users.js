@@ -27,7 +27,9 @@ router.post("/register", (req, res) => {
     } else {
       sqlite.registerUser(username, password, email, (err, result) => {
         if (err.message == "SQLITE_CONSTRAINT: UNIQUE constraint failed: users.username") {
-          return console.log("duplicate username error");
+          console.log("duplicate username error");
+          alert("duplicate username error")
+          res.redirect('/');
         } else if (err) {
           res.redirect("/")
         } else {
@@ -43,6 +45,16 @@ router.post("/login", (req, res) => {
   let sqlite = new Sqlite();
   let username = req.body.username;
   let password = req.body.password;
+  let session = req.session
+  let cart = new Cart(req.session.cart ? req.session.cart : {});
+
+  function getUser(session) {
+    if (session.loggedin === true) {
+      return req.session.username;
+    } else {
+      return false;
+    }
+  };
 
   if (username && password) {
     sqlite.loginUser(username, password, (err, row) => {
@@ -50,7 +62,15 @@ router.post("/login", (req, res) => {
         res.redirect("/");
       } else if (!row) {
         console.log("failed to login");
-        res.redirect("/")
+        sqlite.getProducts((err, products) => {
+          console.log(products);
+          res.render("index", {
+            cartCount: cart.totalQty,
+            name: getUser(session),
+            products: products,
+            logSucsess: false
+          });
+        });
       } else if (username == "Admin") {
         req.session.isadmin = true;
         req.session.loggedin = true;
