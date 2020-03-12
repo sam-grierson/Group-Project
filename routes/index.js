@@ -56,7 +56,6 @@ router.post("/search", (req, res) => { // function  for searching database
  });
 });
 
-
 router.get("/add-cart/:id", (req, res) => {
   let productId = req.params.id;
   let sqlite = new Sqlite();
