@@ -5,35 +5,47 @@ const Cart = require("../models/cart");
 const Sqlite = require("../models/sqlite");
 
 router.get("/", (req, res) => {
+  let sqlite = new Sqlite();
   let cart = new Cart(req.session.cart ? req.session.cart : {});
-  let session = req.session
+  let session = req.session;
 
-  function getUser(session) {
-    if (session.loggedin === true) {
-      return req.session.username;
-    } else {
-      return false;
-    }
+  if (session.loggedin == true) {
+    sqlite.getUserDetails(session.username,(err, userDetails) => {
+
+      res.render("checkout", {
+        nameDetails: userDetails.name,
+        email: userDetails.Email,
+        phoneNo: userDetails.phoneNo,
+        address: userDetails.address,
+        cardName: userDetails.cardName,
+        cardNo: userDetails.cardNo,
+        expiration: userDetails.expiry,
+        cartCount: cart.totalQty,
+        cartEmpty: cart.totalQty,
+        loggedIn: req.session.loggedin,
+        total: cart.totalPrice,
+        paymentSub: null,
+        name: session.username
+      });
+    });
+  } else {
+    res.render("checkout", {
+      nameDetails: null,
+      email: null,
+      phoneNo: null,
+      address: null,
+      cardName: null,
+      cardNo: null,
+      expiration: null,
+      cartCount: cart.totalQty,
+      cartEmpty: cart.totalQty,
+      loggedIn: req.session.loggedin,
+      total: cart.totalPrice,
+      paymentSub: null,
+      name: false
+    });
   }
-
-  res.render("checkout", {
-    cartCount: cart.totalQty,
-    cartEmpty: cart.totalQty,
-    loggedIn: req.session.loggedin,
-    total: cart.totalPrice,
-    paymentSub: null,
-    name: getUser(session)
-  });
 });
-
-// User checkout payments
-// let db = new sqlite3.Database("db/database.db");
-// let sql = `INSERT INTO user(username,firstname,surname,email,phoneNo,address,cardName,cardNo,expMon,expYr) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`
-// db.run(sql, [username,firstName,surname,email,phoneNo,address,cardName,cardNo,expMon,expYr], (err) => {
-//   if (err) {
-//     return console.error(err.message);
-//   }
-// });
 
 // Guest checkout payments
 router.post("/", (req, res) => {
@@ -55,6 +67,14 @@ router.post("/", (req, res) => {
   req.session.cart = cart
 
   res.render("checkout", {
+    firstName: null,
+    secondName: null,
+    email: null,
+    phoneNo: null,
+    address: null,
+    cardName: null,
+    cardNo: null,
+    expiration,
     cartCount: cart.totalQty,
     cartEmpty: cart.totalQty,
     loggedIn: req.session.loggedin,

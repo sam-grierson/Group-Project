@@ -9,16 +9,33 @@
     <div class="w3-main" style="margin-top: 85px">
         <%if (loggedIn) {%>
           <h3>Total to pay: £<%=total%></h3>
-          <h1>Confirm details</h1>
+          <h1>Confirm Payment Details</h1>
+          <!-- User Current Payment Details -->
+          <label for="firstname"><b>Name</b></label>
+          <p name="firstname"><%=nameDetails%></p>
+          <label for="firstname"><b>Email</b></label>
+          <p name="firstname"><%=email%></p>
+          <label for="firstname"><b>Phone Number</b></label>
+          <p name="firstname"><%=phoneNo%></p>
+          <label for="firstname"><b>Address</b></label>
+          <p name="firstname"><%=address%></p>
+          <label for="firstname"><b>Credit Card Holder</b></label>
+          <p name="firstname"><%=cardName%></p>
+          <label for="firstname"><b>Card that ends in</b></label>
+          <p name="firstname"><%=cardNo%></p>
+          <label for="firstname"><b>Card Expiration</b></label>
+          <p name="firstname"><%=expiration%></p>
+          <button class="cancelbtn1" type="button">Change Details</button>
+          <button class="signupbtn" type="submit">Confirm Details and Submit Order</button>
         <%} else {%>
           <h1>Checkout as guest</h1>
           <h3>Your Total: £<%=total%></h3>
-          <!-- Payment Information Form -->
-          <p>Continue making order as a guest or <a href="#" style="color:dodgerblue;" onclick="document.getElementById('id02').style.display='block'">create an account</a>?</p>
-          <label for="1name"><b>First Name</b></label>
+          <!-- Guest Payment Form -->
+          <p>Continue making order as a guest or <a href="#" style="color:dodgerblue;" onclick="document.getElementById('id02').style.display='block'">create an account</a>?</p>   
           <form method="POST" action="/checkout">
+            <label for="firstname"><b>First Name</b></label>
             <input class="signup" type="text" placeholder="Enter Firstname" name="firstname" required>
-            <label for="2name"><b>Surname</b></label>
+            <label for="secondname"><b>Surname</b></label>
             <input class="signup" type="text" placeholder="Enter Surname" name="secondname" required>
             <label for="email"><b>Email</b></label>
             <input class="signup" type="text" placeholder="Enter Email" name="email" required>
@@ -36,7 +53,7 @@
             <input class="signup" type="text" placeholder="Enter the Card Expiration Year" name="expyr" required>
             <label for="cvc"><b>CVC</b></label>
             <input class="signup" type="text" placeholder="Enter the Card CVC" name="cvc" required>
-            <p>By creating an account you agree to our <a href="#" style="color:dodgerblue;">Terms & Policy</a>.</p>
+            <p>By making a purchase you agree to our <a href="#" style="color:dodgerblue;">Terms & Policy</a>.</p>
             <button class="cancelbtn1" type="button">Cancel Order</button>
             <button class="signupbtn" type="submit">Confirm Order</button>
           </form>
