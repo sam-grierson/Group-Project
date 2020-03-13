@@ -4,7 +4,7 @@ module.exports = function Sqlite() {
 
   this.getProducts = function(callback) {
     let sql = `SELECT * FROM products`;
-    let db = new sqlite3.Database("db/database.db", (err) => {
+    let db = new sqlite3.Database(database, (err) => {
       if (err) {
         return console.error(err);
       }
@@ -27,7 +27,7 @@ module.exports = function Sqlite() {
 
   this.addToCart = function(id, callback) {
     let sql = `SELECT * FROM products WHERE id = ?`;
-    let db = new sqlite3.Database("db/database.db", (err) => {
+    let db = new sqlite3.Database(database, (err) => {
       if (err) {
         return console.error(err);
       }
@@ -51,7 +51,7 @@ module.exports = function Sqlite() {
 
   this.registerUser = function(username, password, email, callback) {
     let sql = `INSERT INTO users(username,password,email) VALUES(?, ?, ?)`;
-    let db = new sqlite3.Database("db/database.db", (err) => {
+    let db = new sqlite3.Database(database, (err) => {
       if (err) {
         return console.error(err);
       }
@@ -79,12 +79,12 @@ module.exports = function Sqlite() {
 
   this.loginUser = function(username, password, callback) {
     let sql = `SELECT * FROM users WHERE username = ? AND password = ?`;
-    let db = new sqlite3.Database("db/database.db", (err) => {
+    let db = new sqlite3.Database(database, (err) => {
       if (err) {
         return console.error(err);
       }
     });
-    
+
     db.get(sql, [username, password], (err, row) => {
       if (err) {
         console.error(err);
@@ -103,7 +103,7 @@ module.exports = function Sqlite() {
 
   this.getUserDetails = function(username, callback) {
     let sql = `SELECT * FROM users WHERE username = ?`;
-    let db = new sqlite3.Database("db/database.db", (err) => {
+    let db = new sqlite3.Database(database, (err) => {
       if (err) {
         return console.error(err);
       }
