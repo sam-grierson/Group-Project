@@ -61,9 +61,6 @@ module.exports = function Sqlite() {
       if (err) {
         console.error(err);
         return callback(err);
-      } else if (err) {
-        console.error(err);
-        return callback(err);
       } else {
         // return true for successful database entry
         return callback(null, result = true);
@@ -115,6 +112,30 @@ module.exports = function Sqlite() {
         return callback(err);
       } else {
         return callback(null, row);
+      }
+    });
+
+    db.close((err) => {
+      if (err) {
+        return console.error(err);
+      }
+    });
+  };
+
+  this.insertOrder = function(name, phoneNo, address, cardName, cardNo, expiration, amount, productID, customerID, callback) {
+    let sql = `INSERT INTO orders(name, phoneNo, address, cardName, cardNo, expiration, amount, productID, customerID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    let db = new sqlite3.Database(database, (err) => {
+      if (err) {
+        console.error(err);
+      }
+    });
+
+    db.run(sql, [name, phoneNo, address, cardName, cardNo, expiration, amount, productID, customerID], (err, result) => {
+      if (err) {
+        console.error(err);
+        return callback(err);
+      } else {
+        return callback(null, result = true);
       }
     });
 
