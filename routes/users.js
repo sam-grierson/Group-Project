@@ -55,10 +55,12 @@ router.post("/login", (req, res) => {
         req.session.isadmin = true;
         req.session.loggedin = true;
         req.session.username = username;
+        req.session.userID = row.id;
         res.redirect("/");
       } else {
         req.session.loggedin = true;
         req.session.username = username;
+        req.session.userID = row.id;
         res.redirect("/");
         console.log("Logged in");
       }
@@ -96,8 +98,8 @@ router.get('/profile', function(req,res){
       return false;
     }
   }
-  sqlite.getProfile(userId, (err,row) => {
 
+  sqlite.getUserDetails(userId, (err,row) => {
     if (err) {
       console.error(err);
       return res.redirect('/');
@@ -113,7 +115,6 @@ router.get('/profile', function(req,res){
       });
     }
   });
-
 });
 
 module.exports = router;
