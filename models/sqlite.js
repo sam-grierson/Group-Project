@@ -122,15 +122,15 @@ module.exports = function Sqlite() {
     });
   };
 
-  this.insertOrder = function(name, phoneNo, address, cardName, cardNo, expiration, amount, productID, customerID, callback) {
-    let sql = `INSERT INTO orders(name, phoneNo, address, cardName, cardNo, expiration, amount, productID, customerID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  this.insertOrder = function(name, phoneNo, address, cardName, cardNo, expiration, amount, productID, productQty, customerID, callback) {
+    let sql = `INSERT INTO orders(name, phoneNo, address, cardName, cardNo, expiration, amount, productID, productQty, customerID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     let db = new sqlite3.Database(database, (err) => {
       if (err) {
         console.error(err);
       }
     });
 
-    db.run(sql, [name, phoneNo, address, cardName, cardNo, expiration, amount, productID, customerID], (err, result) => {
+    db.run(sql, [name, phoneNo, address, cardName, cardNo, expiration, amount, productID, productQty, customerID], (err, result) => {
       if (err) {
         console.error(err);
         return callback(err);
