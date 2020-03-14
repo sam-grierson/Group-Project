@@ -1,6 +1,8 @@
-const sqlite3 = require("sqlite3").verbose();
 const express = require("express");
 const router = express.Router();
+
+const Sqlite = require("../models/sqlite");
+const sqlite = new Sqlite();
 
 router.get("/", (req, res) => {
   res.render("index", {
@@ -12,36 +14,26 @@ router.get("/", (req, res) => {
 router.post("/", (req, res) => {
   let username = req.body.username;
   let password = req.body.password;
-  let sql = `SELECT * FROM users WHERE username = ? AND password = ?`;
 
   if (username && password) {
-    let db = new sqlite3.Database("db/database.db", (err) => {
-      if (err) {
-        return console.error(err.message);
-      }
-    });
-
-    db.get(sql, [username, password], (err, user) => {
+    sqlite.loginUser(username, password, (err, row) => {
       if (err) {
         return console.error(err.message);
       } else if (!user) {
         res.redirect('/')
-        console.log("falid to login");
+        console.log("failed to login");
       } if (username == "Admin") {
         req.session.isadmin = true;
         req.session.loggedin = true;
         req.session.username = username;
+        req.session.userID = user.id
         res.redirect("/");
       } else {
         req.session.loggedin = true;
         req.session.username = username;
+        req.session.userID = user.id
         res.redirect("/");
-        console.log("Loged in");
-      }
-    });
-    db.close((err) => {
-      if (err) {
-        return console.error(err.message)
+        console.log(req.session.userID);
       }
     });
   }
@@ -55,7 +47,7 @@ router.get("/logout", function(req, res){
         return next(err);
       } else {
         res.redirect('/');
-        console.log("Bey");
+        console.log("Bye");
       }
     });
   }

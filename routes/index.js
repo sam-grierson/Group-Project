@@ -3,9 +3,9 @@ const router = express.Router();
 
 const Cart = require("../models/cart");
 const Sqlite = require("../models/sqlite");
+const sqlite = new Sqlite();
 
 router.get("/", (req, res) => {  
-  let sqlite = new Sqlite();
   let session = req.session
   let cart = new Cart(req.session.cart ? req.session.cart : {});
 
@@ -42,7 +42,7 @@ router.post("/search", (req, res) => { // function  for searching database
    }
  }
 
- db.all(sql , (err,result) => {
+ db.all(sql , (err, products) => {
    if (err) {
      console.error(err);
      return res.redirect("/");
@@ -50,7 +50,7 @@ router.post("/search", (req, res) => { // function  for searching database
      res.render("index",{ // unable to get the additional tables to show up
        cartCount: cart.totalQty,
        name: getUser(session),
-       products: result
+       products: products
      });
    }
  });
@@ -58,7 +58,6 @@ router.post("/search", (req, res) => { // function  for searching database
 
 router.get("/add-cart/:id", (req, res) => {
   let productId = req.params.id;
-  let sqlite = new Sqlite();
 
   sqlite.addToCart(productId,(err, product) => {
     if (err) {
