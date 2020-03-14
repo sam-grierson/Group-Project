@@ -6,8 +6,8 @@ The application is built entirely in node.js and we would love you to test it ou
 
 ### From Sources
 
-1. Install [node.js] (#https://nodejs.org/en/download/)
-2. Run `git clone https://github.com/sam-grierson/Group-Project.git` (or clone [your own fork] (https://github.com/sam-grierson/Group-Project/fork) of the repository)
+1. Install [node.js](#https://nodejs.org/en/download/)
+2. Run `git clone https://github.com/sam-grierson/Group-Project.git` (or clone [your own fork](https://github.com/sam-grierson/Group-Project/fork) of the repository)
 3. Go into the cloned folder using your choice of command line
 4. Run `npm install` (This installs the dependancies and only needs to be done when you first start or have changed the source code)
 5. Run `npm start`
