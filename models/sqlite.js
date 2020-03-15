@@ -121,7 +121,7 @@ module.exports = function Sqlite() {
       }
     });
   };
-  
+
   this.insertOrder = function(name, phoneNo, address, cardName, cardNo, expiration, amount, productID, productQty, customerID, callback) {
     let sql = `INSERT INTO orders(name, phoneNo, address, cardName, cardNo, expiration, amount, productID, productQty, customerID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     let db = new sqlite3.Database(database, (err) => {
@@ -145,12 +145,17 @@ module.exports = function Sqlite() {
       }
     });
   };
-};
+
 
 
 
   this.updateProfile = function(username, email, callback){
     let sql = `UPDATE users SET email = ? WHERE username = ?`;
+    let db = new sqlite3.Database(database, (err) => {
+      if (err) {
+        console.error(err);
+      }
+    });
 
     db.get(sql, [email,username], (err, row) => {
 
@@ -160,6 +165,33 @@ module.exports = function Sqlite() {
       } else {
         return callback(null, row);
 
+      }
+    });
+
+    db.close((err) => {
+      if (err) {
+        return console.error(err);
+      }
+    });
+  };
+
+  this.searchProduct = function(productId, callback){
+    let sql = `SELECT * from products WHERE title LIKE $productId`;
+    let db = new sqlite3.Database(database, (err) => {
+      if (err) {
+        console.error(err);
+      }
+    });
+
+    db.get(sql, [productId], (err, row) => {
+      let lrow = [];
+      lrow.push(row);
+
+      if (err) {
+        console.error(err);
+        return callback(err);
+      } else {
+        return callback(null, lrow);
       }
     });
 
