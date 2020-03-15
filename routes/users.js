@@ -68,7 +68,8 @@ router.post("/login", (req, res) => {
             cartCount: cart.totalQty,
             name: getUser(session),
             products: products,
-            logSucsess: false
+            logSucsess: false,
+            admin: req.session.isadmin
           });
         });
       } else if (username == "Admin") {
@@ -133,6 +134,8 @@ router.get('/profile', function(req,res){
         email: row.Email,
         pass: row.password,
         edit: false,
+        logSucsess: true,
+        admin: req.session.isadmin
       });
     }
   });

@@ -3,10 +3,9 @@ const router = express.Router();
 
 const Cart = require("../models/cart");
 const Sqlite = require("../models/sqlite");
-const sqlite = new Sqlite();
 
-router.get("/", (req, res) => {  
-
+router.get("/", (req, res) => {
+  let sqlite = new Sqlite();
   let session = req.session
   let cart = new Cart(req.session.cart ? req.session.cart : {});
 
@@ -23,18 +22,19 @@ router.get("/", (req, res) => {
       cartCount: cart.totalQty,
       name: getUser(session),
       products: products,
-      logSucsess: true
+      logSucsess: true,
+      admin: req.session.isadmin
     });
   });
 });
 
 router.post("/search", (req, res) => { // function  for searching database
-  let db = new sqlite3.Database("db/database.db");
+  let sqlite = new Sqlite();
   let productId = req.body.productname
-  let sql = `SELECT * from products WHERE title = '${productId}'`; // this makes the query vounerable to sql injections
+  //let sql = `SELECT * from products WHERE title LIKE '${productId}'`; // this makes the query vounerable to sql injections
   let session = req.session
   let cart = new Cart(req.session.cart ? req.session.cart : {});
-  console.log(sql)
+
 
  function getUser(session) { //needed for compatibility with render index
    if (session.loggedin === true) {
@@ -44,7 +44,10 @@ router.post("/search", (req, res) => { // function  for searching database
    }
  }
 
- db.all(sql , (err, products) => {
+ sqlite.searchProduct(productId , (err,result) => {
+
+   //console.log('result '+ JSON.stringify(result));
+   //console.log(result);
    if (err) {
      console.error(err);
      return res.redirect("/");
@@ -53,8 +56,8 @@ router.post("/search", (req, res) => { // function  for searching database
        cartCount: cart.totalQty,
        name: getUser(session),
        products: result,
-       logSucsess: true
-
+       logSucsess: true,
+       admin: req.session.isadmin
      });
    }
  });
@@ -62,6 +65,7 @@ router.post("/search", (req, res) => { // function  for searching database
 
 router.get("/add-cart/:id", (req, res) => {
   let productId = req.params.id;
+  let sqlite = new Sqlite();
 
   sqlite.addToCart(productId,(err, product) => {
     if (err) {

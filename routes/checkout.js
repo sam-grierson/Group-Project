@@ -11,7 +11,7 @@ router.get("/", (req, res) => {
 
   if (session.loggedin == true) {
     sqlite.getUserDetails(session.username,(err, userDetails) => {
-      
+
       res.render("checkout", {
         nameDetails: userDetails.name,
         email: userDetails.Email,
@@ -26,7 +26,9 @@ router.get("/", (req, res) => {
         loggedIn: req.session.loggedin,
         total: cart.totalPrice,
         paymentSub: null,
-        name: session.username
+        name: session.username,
+        logSucsess: true,
+        admin: req.session.isadmin
       });
     });
   } else {
@@ -44,7 +46,9 @@ router.get("/", (req, res) => {
       loggedIn: req.session.loggedin,
       total: cart.totalPrice,
       paymentSub: null,
-      name: false
+      name: false,
+      logSucsess: true,
+      admin: req.session.isadmin
     });
   }
 });
@@ -74,8 +78,8 @@ router.post("/checkout-logged-in", (req, res) => {
           console.error(err);
         } else {
           cart.clearCart();
-          req.session.cart = cart;    
-          
+          req.session.cart = cart;
+
           res.render("checkout", {
             nameDetails: name,
             email: email,
@@ -90,11 +94,13 @@ router.post("/checkout-logged-in", (req, res) => {
             loggedIn: req.session.loggedin,
             total: cart.totalPrice,
             paymentSub: result,
-            name: req.session.username
+            name: req.session.username,
+            logSucsess: true,
+            admin: req.session.isadmin
           });
         }
       });
-    }    
+    }
   } else {
     console.log("fill all inputs");
     res.redirect("/checkout");
@@ -134,7 +140,9 @@ router.post("/checkout-guest", (req, res) => {
     total: cart.totalPrice,
     paymentSub: true,
     name: null,
-    email: email
+    email: email,
+    logSucsess: true,
+    admin: req.session.isadmin
   });
 });
 
