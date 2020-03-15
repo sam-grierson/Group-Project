@@ -9,16 +9,39 @@
     <div class="w3-main" style="margin-top: 85px">
         <%if (loggedIn) {%>
           <h3>Total to pay: £<%=total%></h3>
-          <h1>Confirm details</h1>
+          <!-- User Current Payment Details -->
+          <div class="w3-card-4" style="width:70%">
+            <header class="w3-container w3-light-grey">
+              <h3>Confirm Payment Details</h3>   
+            </header>
+            <form method="POST" action="/checkout/checkout-logged-in">
+              <div class="w3-container">
+                <p>Current Details</p>
+                <hr>
+                <p>Name: <input class="input-box" type="text" value="<%=nameDetails%>" name="userName" disabled=></p>
+                <p>Email: <input class="input-box" type="text" value="<%=email%>" name="userEmail" disabled></p>
+                <p>Phone Number: <input class="input-box" type="text" value="<%=phoneNo%>" name="userPhoneno" disabled></p>
+                <p>Address: <input class="input-box" type="text" value="<%=address%>" name="userAddress" disabled></p>
+                <p>Credit card holder: <input class="input-box" type="text" value="<%=cardName%>" name="userCardName" disabled></p>
+                <p>Card that ends in: <input class="input-box" type="text" value="<%=cardNo%>" name="userCardNo" disabled></p>
+                <p>Card expiration: <input class="input-box" type="text" value="<%=expiration%>" name="userExpiration" disabled></p>
+                <p>CVC: <input class="input-box" type="text" value="<%=cvc%>" name="userCvc" disabled></p>
+                <br>
+              </div>
+              <button type="button" class="w3-button w3-block w3-dark-grey" onclick="var inputs = document.getElementsByClassName('input-box'); for(var i=0; i < inputs.length; i++) { inputs[i].disabled = false };">Edit</button>
+            </div>
+            <a class="cancelbtn1" href="/checkout/cancel">Cancel Order</a>
+            <button class="signupbtn" type="submit">Confirm Order</button>
+          </form>
         <%} else {%>
           <h1>Checkout as guest</h1>
           <h3>Your Total: £<%=total%></h3>
-          <!-- Payment Information Form -->
-          <p>Continue making order as a guest or <a href="#" style="color:dodgerblue;" onclick="document.getElementById('id02').style.display='block'">create an account</a>?</p>
-          <label for="1name"><b>First Name</b></label>
-          <form method="POST" action="/checkout">
+          <!-- Guest Payment Form -->
+          <p>Continue making order as a guest or <a href="#" style="color:dodgerblue;" onclick="document.getElementById('id02').style.display='block'">create an account</a>?</p>   
+          <form method="POST" action="/checkout/checkout-guest">
+            <label for="firstname"><b>First Name</b></label>
             <input class="signup" type="text" placeholder="Enter Firstname" name="firstname" required>
-            <label for="2name"><b>Surname</b></label>
+            <label for="secondname"><b>Surname</b></label>
             <input class="signup" type="text" placeholder="Enter Surname" name="secondname" required>
             <label for="email"><b>Email</b></label>
             <input class="signup" type="text" placeholder="Enter Email" name="email" required>
@@ -36,21 +59,21 @@
             <input class="signup" type="text" placeholder="Enter the Card Expiration Year" name="expyr" required>
             <label for="cvc"><b>CVC</b></label>
             <input class="signup" type="text" placeholder="Enter the Card CVC" name="cvc" required>
-            <p>By creating an account you agree to our <a href="#" style="color:dodgerblue;">Terms & Policy</a>.</p>
-            <button class="cancelbtn1" type="button">Cancel Order</button>
+            <p>By making a purchase you agree to our <a href="#" style="color:dodgerblue;">Terms & Policy</a>.</p>
+            <a class="cancelbtn1" href="/checkout/cancel">Cancel Order</a>
             <button class="signupbtn" type="submit">Confirm Order</button>
           </form>
-          <%if (paymentSub) {%>
-            <div class="login_div" style="display: block;">
-              <div class="log-content animatelog" id="id01">
-                <div class="logcontainer" style="background-color:#f1f1f1;">
-                  <h1>Your order was placed successfully!</h1>
-                  <p>Your order has been placed successfully, an invoice and estimated delivery time will be sent to the email address: <%=email%></p>
-                  <a href="/" class="bb" style="text-decoration: none;">Return to Home Page</a>
-                </div>
+        <%}%>
+        <%if (paymentSub) {%>
+          <div class="login_div" style="display: block;">
+            <div class="log-content animatelog" id="id01">
+              <div class="logcontainer" style="background-color:#f1f1f1;">
+                <h1>Your order was placed successfully!</h1>
+                <p>Your order has been placed successfully, an invoice and estimated delivery time will be sent to the email address: <%=email%></p>
+                <a href="/" class="bb" style="text-decoration: none;">Return to Home Page</a>
               </div>
             </div>
-          <%}%>
+          </div>
         <%}%>
     </div>
   </body>

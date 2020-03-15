@@ -13,9 +13,9 @@ const cartRoute = require("./routes/cart");
 const checkoutRoute = require("./routes/checkout");
 
 db.serialize(function(){
-	db.run("CREATE TABLE IF NOT EXISTS users('id' INTEGER PRIMARY KEY AUTOINCREMENT,'username' TEXT NOT NULL UNIQUE,'password' TEXT NOT NULL, 'Email' TEXT NOT NULL)");
+	db.run("CREATE TABLE IF NOT EXISTS users('id' INTEGER PRIMARY KEY AUTOINCREMENT,'username' TEXT NOT NULL UNIQUE,'password' TEXT NOT NULL, 'Email' TEXT NOT NULL, 'name' TEXT, 'phoneNo' TEXT, 'address' TEXT, 'cardName' TEXT, 'cardNo' INTEGER, 'expiry' TEXT, 'cvc' INTEGER)");
 	db.run("CREATE TABLE IF NOT EXISTS products('id' INTEGER PRIMARY KEY AUTOINCREMENT, 'title' TEXT NOT NULL, 'Price' FLOAT NOT NULL, 'image' TEXT ,'ProductDescripion' TEXT)");
-	db.run("CREATE TABLE IF NOT EXISTS orders('id' INTEGER PRIMARY KEY AUTOINCREMENT,'firstname' TEXT NOT NULL,'lastname' TEXT NOT NULL,'phoneNo' TEXT NOT NULL,'address' TEXT NOT NULL,'cardName' TEXT NOT NULL,'cardNo' INTEGER NOT NULL,'expMon' INTEGER NOT NULL,'expYr' INTEGER NOT NULL,'amount' INTEGER NOT NULL,'productID' INTEGER NOT NULL,'customerID' INTEGER NOT NULL,FOREIGN KEY (productID) REFERENCES products(id),FOREIGN KEY (customerID) REFERENCES users(id))");
+	db.run("CREATE TABLE IF NOT EXISTS orders('id' INTEGER PRIMARY KEY AUTOINCREMENT,'name' TEXT NOT NULL,'phoneNo' TEXT NOT NULL,'address' TEXT NOT NULL,'cardName' TEXT NOT NULL,'cardNo' INTEGER NOT NULL,'expiration' TEXT NOT NULL, 'amount' INTEGER NOT NULL,'productID' INTEGER NOT NULL, 'productQty' INTEGET NOT NULL, 'customerID' INTEGER NOT NULL,FOREIGN KEY (productID) REFERENCES products(id),FOREIGN KEY (customerID) REFERENCES users(id))");
 });
 
 
