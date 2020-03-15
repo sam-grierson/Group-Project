@@ -15,18 +15,39 @@
           <%}%>
 
         </header>
+
         <div class="w3-container">
           <p>Profile detail</p>
           <hr>
-          <p>Username: <input type="text" value="<%=username%>" disabled></p>
-          <p>Email: <input type="text" value="<%=email%>" disabled></p>
-          <p>Password: <input type="password" value="<%=pass%>" disabled></p>
-          <br>
+            <form action="/users/update-profile" method="POST">
+              <p>Username: <input id="user" type="text" value="<%=username%>" disabled name="username"></p>
+              <p>Email: <input id="email" type="text" value="<%=email%>" disabled name="email"></p>
+              <p>Password: <input id="pass" type="password" value="<%=pass%>" disabled name="password"></p>
+            <br>
+            <a class="w3-button w3-block w3-dark-grey" onclick="edit()" id="edit">edit</a>
+            <button class="w3-button w3-block w3-green" type="submit" style="display:none" id="save">save changes</button>
+            <a class="w3-button w3-block w3-red" style="display:none" id="cancel" onclick="cancel()">cancel</a>
+            </form>
         </div>
-        <a class="w3-button w3-block w3-dark-grey">edit</a>
       </div>
     </div>
-
   </body>
   <%-include("templates/footer.ejs")-%>
+  <script type="text/javascript">
+    function edit(){
+      document.getElementById('edit').style.display='none';
+      document.getElementById('save').style.display='block';
+      document.getElementById('cancel').style.display='block';
+      document.getElementById('email').disabled = false;
+      document.getElementById('pass').disabled = false;
+    };
+
+    function cancel() {
+      document.getElementById('edit').style.display='block';
+      document.getElementById('save').style.display='none';
+      document.getElementById('cancel').style.display='none';
+      document.getElementById('email').disabled = true;
+      document.getElementById('pass').disabled = true;
+    };
+  </script>
 </html>

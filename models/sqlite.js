@@ -121,7 +121,7 @@ module.exports = function Sqlite() {
       }
     });
   };
-
+  
   this.insertOrder = function(name, phoneNo, address, cardName, cardNo, expiration, amount, productID, productQty, customerID, callback) {
     let sql = `INSERT INTO orders(name, phoneNo, address, cardName, cardNo, expiration, amount, productID, productQty, customerID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     let db = new sqlite3.Database(database, (err) => {
@@ -136,6 +136,30 @@ module.exports = function Sqlite() {
         return callback(err);
       } else {
         return callback(null, result = true);
+      }
+    });
+
+    db.close((err) => {
+      if (err) {
+        return console.error(err);
+      }
+    });
+  };
+};
+
+
+
+  this.updateProfile = function(username, email, callback){
+    let sql = `UPDATE users SET email = ? WHERE username = ?`;
+
+    db.get(sql, [email,username], (err, row) => {
+
+      if (err) {
+        console.error(err);
+        return callback(err);
+      } else {
+        return callback(null, row);
+
       }
     });
 

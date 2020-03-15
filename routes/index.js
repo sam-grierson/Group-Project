@@ -6,6 +6,7 @@ const Sqlite = require("../models/sqlite");
 const sqlite = new Sqlite();
 
 router.get("/", (req, res) => {  
+
   let session = req.session
   let cart = new Cart(req.session.cart ? req.session.cart : {});
 
@@ -21,7 +22,8 @@ router.get("/", (req, res) => {
       res.render("index", {
       cartCount: cart.totalQty,
       name: getUser(session),
-      products: products
+      products: products,
+      logSucsess: true
     });
   });
 });
@@ -50,7 +52,9 @@ router.post("/search", (req, res) => { // function  for searching database
      res.render("index",{ // unable to get the additional tables to show up
        cartCount: cart.totalQty,
        name: getUser(session),
-       products: products
+       products: result,
+       logSucsess: true
+
      });
    }
  });

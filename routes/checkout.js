@@ -11,7 +11,7 @@ router.get("/", (req, res) => {
 
   if (session.loggedin == true) {
     sqlite.getUserDetails(session.username,(err, userDetails) => {
-
+      
       res.render("checkout", {
         nameDetails: userDetails.name,
         email: userDetails.Email,

@@ -20,7 +20,8 @@ router.get("/", (req, res) => {
       cartCount: false,
       products: false,
       total: 0,
-      name: getUser(session)
+      name: getUser(session),
+      logSucsess: true
     });
   }
 
@@ -29,7 +30,8 @@ router.get("/", (req, res) => {
     cartCount: cart.totalQty,
     products: cart.generateArray(),
     total: cart.totalPrice,
-    name: getUser(session)
+    name: getUser(session),
+    logSucsess: true
   });
 });
 
