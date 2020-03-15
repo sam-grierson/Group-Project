@@ -23,7 +23,11 @@
               <%}%>
             </i></a>
             <div class="w3-dropdown-content w3-bar-block w3-card-5" style="right:0">
-              <%if (name) {%>
+              <%if (admin) {%>
+                <a href="/users/logout" class="w3-bar-item w3-button">Logout</a>
+                <a href="/users/profile" class="w3-bar-item w3-button">Profile</a>
+                <a href="#" class="w3-bar-item w3-button">Products</a>
+              <%} else if (name) {%>
                 <a href="/users/logout" class="w3-bar-item w3-button">Logout</a>
                 <a href="/users/profile" class="w3-bar-item w3-button">Profile</a>
               <%} else {%>
