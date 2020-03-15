@@ -21,7 +21,8 @@ router.get("/", (req, res) => {
       products: false,
       total: 0,
       name: getUser(session),
-      logSucsess: true
+      logSucsess: true,
+      admin: req.session.isadmin
     });
   }
 
@@ -31,7 +32,8 @@ router.get("/", (req, res) => {
     products: cart.generateArray(),
     total: cart.totalPrice,
     name: getUser(session),
-    logSucsess: true
+    logSucsess: true,
+    admin: req.session.isadmin
   });
 });
 

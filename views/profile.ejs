@@ -40,6 +40,7 @@
       document.getElementById('cancel').style.display='block';
       document.getElementById('email').disabled = false;
       document.getElementById('pass').disabled = false;
+      document.getElementById('pass').type = 'text';
     };
 
     function cancel() {
@@ -48,6 +49,7 @@
       document.getElementById('cancel').style.display='none';
       document.getElementById('email').disabled = true;
       document.getElementById('pass').disabled = true;
+      document.getElementById('pass').type = 'password';
     };
   </script>
 </html>
