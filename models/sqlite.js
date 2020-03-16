@@ -146,9 +146,6 @@ module.exports = function Sqlite() {
     });
   };
 
-
-
-
   this.updateProfile = function(username, email, callback){
     let sql = `UPDATE users SET email = ? WHERE username = ?`;
     let db = new sqlite3.Database(database, (err) => {
@@ -175,23 +172,20 @@ module.exports = function Sqlite() {
     });
   };
 
-  this.searchProduct = function(productId, callback){
-    let sql = `SELECT * from products WHERE title LIKE $productId`;
+  this.searchProduct = function(criteria, callback){
+    let sql = `SELECT * from products WHERE title LIKE '%${criteria}%'`;
     let db = new sqlite3.Database(database, (err) => {
       if (err) {
         console.error(err);
       }
     });
 
-    db.get(sql, [productId], (err, row) => {
-      let lrow = [];
-      lrow.push(row);
-
+    db.all(sql, (err, row) => {
       if (err) {
         console.error(err);
         return callback(err);
       } else {
-        return callback(null, lrow);
+        return callback(null, row);
       }
     });
 

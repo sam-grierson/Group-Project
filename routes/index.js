@@ -3,9 +3,9 @@ const router = express.Router();
 
 const Cart = require("../models/cart");
 const Sqlite = require("../models/sqlite");
+const sqlite = new Sqlite();
 
 router.get("/", (req, res) => {
-  let sqlite = new Sqlite();
   let session = req.session
   let cart = new Cart(req.session.cart ? req.session.cart : {});
 
@@ -28,15 +28,13 @@ router.get("/", (req, res) => {
   });
 });
 
-router.post("/search", (req, res) => { // function  for searching database
-  let sqlite = new Sqlite();
-  let productId = req.body.productname
-  //let sql = `SELECT * from products WHERE title LIKE '${productId}'`; // this makes the query vounerable to sql injections
+router.post("/search", (req, res) => {
+  let criteria = req.body.productname
   let session = req.session
   let cart = new Cart(req.session.cart ? req.session.cart : {});
 
 
- function getUser(session) { //needed for compatibility with render index
+ function getUser(session) {
    if (session.loggedin === true) {
      return req.session.username;
    } else {
@@ -44,15 +42,13 @@ router.post("/search", (req, res) => { // function  for searching database
    }
  }
 
- sqlite.searchProduct(productId , (err,result) => {
-
-   //console.log('result '+ JSON.stringify(result));
-   //console.log(result);
+ sqlite.searchProduct(criteria , (err, result) => {
    if (err) {
      console.error(err);
      return res.redirect("/");
-   }else{
-     res.render("index",{ // unable to get the additional tables to show up
+   } else {
+     console.log(result)
+     res.render("index",{
        cartCount: cart.totalQty,
        name: getUser(session),
        products: result,
