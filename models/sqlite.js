@@ -50,21 +50,36 @@ module.exports = function Sqlite() {
   };
 
   this.registerUser = function(username, password, email, callback) {
-    let sql = `INSERT INTO users(username,password,email) VALUES(?, ?, ?)`;
+    let sqlUsers = `INSERT INTO users(username,password,email) VALUES(?, ?, ?)`;
+    let sqlGetID = `SELECT id FROM users WHERE username = ?`
+    let sqlUserPaymentDetails = `INSERT INTO userPaymentDetails(userID) VALUES(?)`;
+
     let db = new sqlite3.Database(database, (err) => {
       if (err) {
         return console.error(err);
       }
     });
 
-    db.run(sql, [username, password, email], (err, result) => {
+    db.run(sqlUsers, [username, password, email], (err, result) => {
       if (err) {
         console.error(err);
         return callback(err);
       } else {
-        // return true for successful database entry
-        return callback(null, result = true);
+        db.get(sqlGetID, [username], (err, userID) => {
+          if (err) {
+            console.error(err);
+            return callback(err);
+          }
+          return db.run(sqlUserPaymentDetails, [userID.id], (err, result) => {
+            if (err) {
+              console.error(err);
+              return callback(err);
+            }
+            return callback(null, result=true);
+          });
+        });
       }
+      return callback(null, result=true);
     });
 
     db.close((err) => {
@@ -107,6 +122,30 @@ module.exports = function Sqlite() {
     });
 
     db.get(sql, [username], (err, row) => {
+      if (err) {
+        console.error(err);
+        return callback(err);
+      } else {
+        return callback(null, row);
+      }
+    });
+
+    db.close((err) => {
+      if (err) {
+        return console.error(err);
+      }
+    });
+  };
+
+  this.getUserPaymentDetails = function(userID, callback) {
+    let sql = `SELECT * FROM userPaymentDetails WHERE userID = ?`;
+    let db = new sqlite3.Database(database, (err) => {
+      if (err) {
+        return console.error(err);
+      }
+    });
+
+    db.get(sql, [userID], (err, row) => {
       if (err) {
         console.error(err);
         return callback(err);
