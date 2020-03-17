@@ -1,39 +1,74 @@
 const express = require("express");
 const router = express.Router();
 
-
+const utils = require("../lib/utils");
 const Cart = require("../models/cart");
 const Sqlite = require("../models/sqlite");
-
-
-/*router.get("/", (req, res) => {
-  res.render("index", {
-    user: false
-  });
-  console.log("try again");
-});*/
+const sqlite = new Sqlite();
 
 // register route
 router.post("/register", (req, res) => {
-  let sqlite = new Sqlite();
   let username = req.body.username;
   let email = req.body.email;
   let password = req.body.password;
   let passwordTwo = req.body.passwordTwo;
+  let session = req.session;
+  let cart = new Cart(req.session.cart ? req.session.cart : {});
 
   if (username && email && password && passwordTwo) {
     if (password !== passwordTwo) {
-      res.redirect('/');
+      sqlite.getProducts((productsErr, products) => {
+        res.render("index", {
+          cartCount: cart.totalQty,
+          name: utils.getUser(session),
+          products: products,
+          loginError: null,
+          registerError: "Passwords don't match",
+          registerSuccess: null,
+          admin: req.session.isadmin
+        });
+      });
     } else {
       sqlite.registerUser(username, password, email, (err, result) => {
-        if (err.message == "SQLITE_CONSTRAINT: UNIQUE constraint failed: users.username") {
-          console.log("duplicate username error");
-          alert("duplicate username error")
-          res.redirect('/');
-        } else if (err) {
-          res.redirect("/")
+        if (err) { 
+          if (err.errno == 19) {
+            sqlite.getProducts((productsErr, products) => {
+              res.render("index", {
+                cartCount: cart.totalQty,
+                name: utils.getUser(session),
+                products: products,
+                loginError: null,
+                registerError: "Username has already been taken.",
+                registerSuccess: null,
+                admin: req.session.isadmin
+              });
+            });
+          } else {
+            sqlite.getProducts((productsErr, products) => {
+              res.render("index", {
+                cartCount: cart.totalQty,
+                name: utils.getUser(session),
+                products: products,
+                loginError: null,
+                registerError: err,
+                registerSuccess: null,
+                admin: req.session.isadmin
+              });
+            });
+          }
         } else {
-          res.redirect("/");
+          console.log("created new user account");
+          sqlite.getProducts((productsErr, products) => {
+            res.render("index", {
+              cartCount: cart.totalQty,
+              name: utils.getUser(session),
+              products: products,
+              loginError: null,
+              registerError: null,
+              registerSuccess: true,
+              admin: req.session.isadmin
+            });
+          });
         }
       });
     }
@@ -42,33 +77,34 @@ router.post("/register", (req, res) => {
 
 // login route
 router.post("/login", (req, res) => {
-  let sqlite = new Sqlite();
   let username = req.body.username;
   let password = req.body.password;
   let session = req.session
   let cart = new Cart(req.session.cart ? req.session.cart : {});
 
-  function getUser(session) {
-    if (session.loggedin === true) {
-      return req.session.username;
-    } else {
-      return false;
-    }
-  };
-
   if (username && password) {
     sqlite.loginUser(username, password, (err, row) => {
       if (err) {
-        res.redirect("/");
-      } else if (!row) {
-        console.log("failed to login");
-        sqlite.getProducts((err, products) => {
-          console.log(products);
+        sqlite.getProducts((productErr, products) => {
           res.render("index", {
             cartCount: cart.totalQty,
-            name: getUser(session),
+            name: utils.getUser(session),
             products: products,
-            logSucsess: false,
+            loginError: err,
+            registerError: null,
+            registerSuccess: null,
+            admin: req.session.isadmin
+          });
+        });
+      } else if (!row) {
+        sqlite.getProducts((err, products) => {
+          res.render("index", {
+            cartCount: cart.totalQty,
+            name: utils.getUser(session),
+            products: products,
+            loginError: "Invalid username/password.",
+            registerError: null,
+            registerSuccess: null,
             admin: req.session.isadmin
           });
         });
@@ -79,11 +115,11 @@ router.post("/login", (req, res) => {
         req.session.userID = row.id;
         res.redirect("/");
       } else {
+        req.session.isadmin = false;
         req.session.loggedin = true;
         req.session.username = username;
         req.session.userID = row.id;
         res.redirect("/");
-        console.log("Logged in");
       }
     });
   }
@@ -108,17 +144,7 @@ router.get('/profile', function(req,res){
   let sqlite = new Sqlite();
   let session = req.session;
   let cart = new Cart(req.session.cart ? req.session.cart : {});
-  let userId = getUser(session);
-
-
-
-  function getUser(session) {
-    if (session.loggedin === true) {
-      return req.session.username;
-    } else {
-      return false;
-    }
-  }
+  let userId = utils.getUser(session);
 
   sqlite.getUserDetails(userId, (err,row) => {
     if (err) {
@@ -129,12 +155,14 @@ router.get('/profile', function(req,res){
         cartCount: cart.totalQty,
         products: cart.generateArray(),
         total: cart.totalPrice,
-        name: getUser(session),
+        name: utils.getUser(session),
         username: row.username,
         email: row.Email,
         pass: row.password,
         edit: false,
-        logSucsess: true,
+        loginError: null,
+        registerError: null,
+        registerSuccess: null,
         admin: req.session.isadmin
       });
     }
@@ -147,7 +175,6 @@ router.post('/update-profile', (req, res) => {
   let cart = new Cart(req.session.cart ? req.session.cart : {});
   let userId = getUser(session);
   let email = req.body.email;
-
 
   function getUser(session) {
     if (session.loggedin === true) {
@@ -167,7 +194,6 @@ router.post('/update-profile', (req, res) => {
       res.redirect('/');
     }
   });
-
 });
 
 module.exports = router;
