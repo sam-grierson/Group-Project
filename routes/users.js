@@ -134,32 +134,27 @@ router.get("/logout", function(req, res){
         return next(err);
       } else {
         res.redirect('/');
-        console.log("Bye");
       }
     });
   }
 });
 
 router.get('/profile', function(req,res){
-  let sqlite = new Sqlite();
-  let session = req.session;
+  let userID = req.session.userID;
   let cart = new Cart(req.session.cart ? req.session.cart : {});
-  let userId = utils.getUser(session);
 
-  sqlite.getUserDetails(userId, (err,row) => {
+  sqlite.getUserDetails(userID, (err, row) => {
     if (err) {
       console.error(err);
       return res.redirect('/');
     } else {
       res.render('profile', {
         cartCount: cart.totalQty,
-        products: cart.generateArray(),
-        total: cart.totalPrice,
-        name: utils.getUser(session),
+        name: req.session.username,
         username: row.username,
-        email: row.Email,
+        email: row.email,
         pass: row.password,
-        edit: false,
+        detailUpdateError: null,
         loginError: null,
         registerError: null,
         registerSuccess: null,
@@ -170,28 +165,61 @@ router.get('/profile', function(req,res){
 });
 
 router.post('/update-profile', (req, res) => {
-  let sqlite = new Sqlite();
-  let session = req.session;
   let cart = new Cart(req.session.cart ? req.session.cart : {});
-  let userId = getUser(session);
+  let userID = req.session.userID;
+  let username = req.body.username;
   let email = req.body.email;
+  let password = req.body.password;
 
-  function getUser(session) {
-    if (session.loggedin === true) {
-      return req.session.username;
+  sqlite.updateProfile(username, email, password, userID, (err, result) => {
+    if (err) { 
+      if (err.errno == 19) {
+        sqlite.getUserDetails(userID, (errGetDetails, row) => {
+          res.render('profile', {
+            cartCount: cart.totalQty,
+            name: req.session.username,
+            username: row.username,
+            email: row.email,
+            pass: row.password,
+            detailUpdateError: "Username is already taken",
+            loginError: null,
+            registerError: null,
+            registerSuccess: null,
+            admin: req.session.isadmin
+          });
+        });
+      } else {
+        sqlite.getUserDetails(userID, (errGetDetails, row) => {
+          res.render('profile', {
+            cartCount: cart.totalQty,
+            name: req.session.username,
+            username: row.username,
+            email: row.email,
+            pass: row.password,
+            detailUpdateError: err,
+            loginError: null,
+            registerError: null,
+            registerSuccess: null,
+            admin: req.session.isadmin
+          });
+        });
+      }
     } else {
-      return false;
-    }
-  }
-
-  sqlite.updateProfile(req.session.username,email, (err,row) => {
-    console.log(row);
-    if (err) {
-      console.error(err);
-      return res.redirect('/');
-    } else {
-      console.log('here');
-      res.redirect('/');
+      req.session.username = username;
+      sqlite.getUserDetails(userID, (err, row) => {
+        res.render('profile', {
+          cartCount: cart.totalQty,
+          name: req.session.username,
+          username: row.username,
+          email: row.email,
+          pass: row.password,
+          detailUpdateError: null,
+          loginError: null,
+          registerError: null,
+          registerSuccess: null,
+          admin: req.session.isadmin
+        });
+      });
     }
   });
 });

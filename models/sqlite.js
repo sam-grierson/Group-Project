@@ -114,7 +114,7 @@ module.exports = function Sqlite() {
   };
 
   this.getUserDetails = function(username, callback) {
-    let sql = `SELECT * FROM users WHERE username = ?`;
+    let sql = `SELECT * FROM users WHERE id = ?`;
     let db = new sqlite3.Database(database, (err) => {
       if (err) {
         return console.error(err);
@@ -185,22 +185,21 @@ module.exports = function Sqlite() {
     });
   };
 
-  this.updateProfile = function(username, email, callback){
-    let sql = `UPDATE users SET email = ? WHERE username = ?`;
+  this.updateProfile = function(username, email, password, userID, callback){
+    let sql = `UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?`;
     let db = new sqlite3.Database(database, (err) => {
       if (err) {
         console.error(err);
       }
     });
 
-    db.get(sql, [email,username], (err, row) => {
+    db.run(sql, [username, email, password, userID], (err, result) => {
 
       if (err) {
         console.error(err);
         return callback(err);
       } else {
-        return callback(null, row);
-
+        return callback(null, result = true);
       }
     });
 
