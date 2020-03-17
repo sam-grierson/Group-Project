@@ -61,7 +61,6 @@ router.post("/checkout-logged-in", (req, res) => {
   let cart = new Cart(req.session.cart);
 
   let name = req.body.userName;
-  let email = req.body.userEmail;
   let phoneNo = req.body.userPhoneno;
   let address = req.body.userAddress;
   let cardName = req.body.userCardName;
@@ -71,7 +70,7 @@ router.post("/checkout-logged-in", (req, res) => {
 
   // need to add input validation
 
-  if (name && email && phoneNo && address && cardName && cardNo && expiration && cvc) {
+  if (name && phoneNo && address && cardName && cardNo && expiration && cvc) {
     products = cart.generateArray();
     for (let i = 0; i < products.length; i++) {
       sqlite.insertOrder(name, phoneNo, address, cardName, cardNo, expiration, cart.totalPrice, products[i].qty, products[i].item.id, req.session.userID, (err, result) => {
@@ -80,7 +79,7 @@ router.post("/checkout-logged-in", (req, res) => {
         } else {
           cart.clearCart();
           req.session.cart = cart;
-          sqlite.getUserDetails(req.session.username, (err, userDetails) => {
+          sqlite.getUserDetails(req.session.userID, (err, userDetails) => {
             res.render("checkout", {
               nameDetails: null,
               email: userDetails.email,
