@@ -4,18 +4,14 @@
   <body>
     <!--Nav bar-->
     <%-include("templates/nav.ejs")-%>
-
     <div class="w3-container w3-middle">
       <h2>Card Example</h2>
-
       <div class="w3-card-4" style="width:70%">
         <header class="w3-container w3-light-grey">
           <%if (name){%>
             <h3><%=name%></h3>
           <%}%>
-
         </header>
-
         <div class="w3-container">
           <p>Profile detail</p>
           <hr>
@@ -24,6 +20,9 @@
               <p>Email: <input id="email" type="text" value="<%=email%>" disabled name="email"></p>
               <p>Password: <input id="pass" type="password" value="<%=pass%>" disabled name="password"></p>
             <br>
+            <%if (detailUpdateError) {%>
+              <p style="color:red"><%=detailUpdateError%></p>
+            <%}%>
             <a class="w3-button w3-block w3-dark-grey" onclick="edit()" id="edit">edit</a>
             <button class="w3-button w3-block w3-green" type="submit" style="display:none" id="save">save changes</button>
             <a class="w3-button w3-block w3-red" style="display:none" id="cancel" onclick="cancel()">cancel</a>
@@ -38,6 +37,7 @@
       document.getElementById('edit').style.display='none';
       document.getElementById('save').style.display='block';
       document.getElementById('cancel').style.display='block';
+      document.getElementById('user').disabled = false;
       document.getElementById('email').disabled = false;
       document.getElementById('pass').disabled = false;
       document.getElementById('pass').type = 'text';
@@ -47,6 +47,7 @@
       document.getElementById('edit').style.display='block';
       document.getElementById('save').style.display='none';
       document.getElementById('cancel').style.display='none';
+      document.getElementById('user').disabled = true;
       document.getElementById('email').disabled = true;
       document.getElementById('pass').disabled = true;
       document.getElementById('pass').type = 'password';
