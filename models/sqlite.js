@@ -185,7 +185,7 @@ module.exports = function Sqlite() {
     });
   };
 
-  this.updateProfile = function(username, email, password, userID, callback){
+  this.updateProfile = function(username, email, password, userID, callback) {
     let sql = `UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?`;
     let db = new sqlite3.Database(database, (err) => {
       if (err) {
@@ -194,7 +194,30 @@ module.exports = function Sqlite() {
     });
 
     db.run(sql, [username, email, password, userID], (err, result) => {
+      if (err) {
+        console.error(err);
+        return callback(err);
+      } else {
+        return callback(null, result = true);
+      }
+    });
 
+    db.close((err) => {
+      if (err) {
+        return console.error(err);
+      }
+    });
+  };
+
+  this.updatePaymentDetails = function(name, phoneNo, address, cardName, cardNo, expiration, cvc, userID, callback) {
+    let sql = `UPDATE userPaymentDetails SET name = ?, phoneNo = ?, address = ?, cardName = ?, cardNo = ?, expiry = ?, cvc = ? WHERE userID = ?`
+    let db = new sqlite3.Database(database, (err) => {
+      if (err) {
+        console.error(err);
+      }
+    });
+
+    db.run(sql, [name, phoneNo, address, cardName, cardNo, expiration, cvc, userID], (err, result) => {
       if (err) {
         console.error(err);
         return callback(err);
