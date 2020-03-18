@@ -12,14 +12,9 @@ router.get("/", (req, res) => {
   if (session.loggedin == true) {
     sqlite.getUserPaymentDetails(session.userID,(err, userPaymentDetails) => {
       res.render("checkout", {
-        nameDetails: userPaymentDetails.name,
         email: null,
-        phoneNo: userPaymentDetails.phoneNo,
-        address: userPaymentDetails.address,
-        cardName: userPaymentDetails.cardName,
-        cardNo: userPaymentDetails.cardNo,
-        expiration: userPaymentDetails.expiry,
-        cvc: userPaymentDetails.cvc,
+        userPaymentDetails: userPaymentDetails,
+        userCheckoutError: null,
         cartCount: cart.totalQty,
         cartEmpty: cart.totalQty,
         loggedIn: req.session.loggedin,
@@ -34,14 +29,9 @@ router.get("/", (req, res) => {
     });
   } else {
     res.render("checkout", {
-      nameDetails: null,
       email: null,
-      phoneNo: null,
-      address: null,
-      cardName: null,
-      cardNo: null,
-      expiration: null,
-      cvc: null,
+      userPaymentDetails: null,
+      userCheckoutError: null,
       cartCount: cart.totalQty,
       cartEmpty: cart.totalQty,
       loggedIn: req.session.loggedin,
@@ -75,38 +65,69 @@ router.post("/checkout-logged-in", (req, res) => {
     for (let i = 0; i < products.length; i++) {
       sqlite.insertOrder(name, phoneNo, address, cardName, cardNo, expiration, cart.totalPrice, products[i].qty, products[i].item.id, req.session.userID, (err, result) => {
         if (err) {
-          console.error(err);
+          sqlite.getUserDetails(req.session.userID, (getUserDetailsError, userDetails) => {
+            sqlite.getUserPaymentDetails(req.session.userID,(getUserPaymentDetailsError, userPaymentDetails) => {
+              res.render("checkout", {
+                email: userDetails.email,
+                userPaymentDetails: userPaymentDetails,
+                userCheckoutError: err,
+                cartCount: cart.totalQty,
+                cartEmpty: cart.totalQty,
+                loggedIn: req.session.loggedin,
+                total: cart.totalPrice,
+                paymentSub: null,
+                name: req.session.username,
+                loginError: null,
+                registerError: null,
+                registerSuccess: null,
+                admin: req.session.isadmin
+              });
+            });
+          });
         } else {
           cart.clearCart();
           req.session.cart = cart;
-          sqlite.getUserDetails(req.session.userID, (err, userDetails) => {
-            res.render("checkout", {
-              nameDetails: null,
-              email: userDetails.email,
-              phoneNo: null,
-              address: null,
-              cardName: null,
-              cardNo: null,
-              expiration: null,
-              cvc: null,
-              cartCount: cart.totalQty,
-              cartEmpty: cart.totalQty,
-              loggedIn: req.session.loggedin,
-              total: cart.totalPrice,
-              paymentSub: result,
-              name: req.session.username,
-              loginError: null,
-              registerError: null,
-              registerSuccess: null,
-              admin: req.session.isadmin
+          sqlite.getUserDetails(req.session.userID, (getUserDetailsError, userDetails) => {
+            sqlite.getUserPaymentDetails(req.session.userID,(getUserPaymentDetailsError, userPaymentDetails) => {
+              res.render("checkout", {
+                email: userDetails.email,
+                userPaymentDetails: userPaymentDetails,
+                userCheckoutError: null,
+                cartCount: cart.totalQty,
+                cartEmpty: cart.totalQty,
+                loggedIn: req.session.loggedin,
+                total: cart.totalPrice,
+                paymentSub: result,
+                name: req.session.username,
+                loginError: null,
+                registerError: null,
+                registerSuccess: null,
+                admin: req.session.isadmin
+              });
             });
           });
         }
       });
     }
   } else {
-    console.log("fill all inputs");
-    res.redirect("/checkout");
+    sqlite.getUserPaymentDetails(req.session.userID,(getUserPaymentDetailsError, userPaymentDetails) => {
+      let error = "Please fill out all the fields in the payment details form."
+      res.render("checkout", {
+        email: null,
+        userPaymentDetails: userPaymentDetails,
+        userCheckoutError: error,
+        cartCount: cart.totalQty,
+        cartEmpty: cart.totalQty,
+        loggedIn: req.session.loggedin,
+        total: cart.totalPrice,
+        paymentSub: false,
+        name: req.session.username,
+        loginError: null,
+        registerError: null,
+        registerSuccess: null,
+        admin: req.session.isadmin
+      });
+    });
   }
 });
 
@@ -130,20 +151,15 @@ router.post("/checkout-guest", (req, res) => {
   req.session.cart = cart;
 
   res.render("checkout", {
-    firstName: null,
-    secondName: null,
-    phoneNo: null,
-    address: null,
-    cardName: null,
-    cardNo: null,
-    expiration: null,
+    email: email,
+    userPaymentDetails: null,
+    userCheckoutError: null,
     cartCount: cart.totalQty,
     cartEmpty: cart.totalQty,
     loggedIn: req.session.loggedin,
     total: cart.totalPrice,
     paymentSub: true,
     name: null,
-    email: email,
     loginError: null,
     registerError: null,
     registerSuccess: null,
