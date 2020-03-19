@@ -7,7 +7,7 @@ const Sqlite = require("../models/sqlite");
 const sqlite = new Sqlite();
 
 // register route
-router.post("/register", (req, res) => {
+router.post("/register", (req, res, next) => {
   let username = req.body.username;
   let email = req.body.email;
   let password = req.body.password;
@@ -15,62 +15,40 @@ router.post("/register", (req, res) => {
   let session = req.session;
   let cart = new Cart(req.session.cart ? req.session.cart : {});
 
+  let error = null;
+  function checkError(error) {
+    if (error === null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   if (username && email && password && passwordTwo) {
     if (password !== passwordTwo) {
-      sqlite.getProducts((productsErr, products) => {
-        res.render("index", {
-          cartCount: cart.totalQty,
-          name: utils.getUser(session),
-          products: products,
-          loginError: null,
-          registerError: "Passwords don't match",
-          registerSuccess: null,
-          admin: req.session.isadmin
-        });
-      });
+      error = "Passwords don't match";
     } else {
       sqlite.registerUser(username, password, email, (err, result) => {
         if (err) { 
           if (err.errno == 19) {
-            sqlite.getProducts((productsErr, products) => {
-              res.render("index", {
-                cartCount: cart.totalQty,
-                name: utils.getUser(session),
-                products: products,
-                loginError: null,
-                registerError: "Username has already been taken.",
-                registerSuccess: null,
-                admin: req.session.isadmin
-              });
-            });
+            return error = "Username has already been taken.";
           } else {
-            sqlite.getProducts((productsErr, products) => {
-              res.render("index", {
-                cartCount: cart.totalQty,
-                name: utils.getUser(session),
-                products: products,
-                loginError: null,
-                registerError: err,
-                registerSuccess: null,
-                admin: req.session.isadmin
-              });
-            });
+            return error = err;
           }
-        } else {
-          sqlite.getProducts((productsErr, products) => {
-            res.render("index", {
-              cartCount: cart.totalQty,
-              name: utils.getUser(session),
-              products: products,
-              loginError: null,
-              registerError: null,
-              registerSuccess: true,
-              admin: req.session.isadmin
-            });
-          });
         }
       });
     }
+    sqlite.getProducts((productsErr, products) => {
+      res.render("index", {
+        cartCount: cart.totalQty,
+        name: utils.getUser(session),
+        products: products,
+        loginError: null,
+        registerError: error,
+        registerSuccess: checkError(error),
+        admin: req.session.isadmin
+      });
+    });
   }
 });
 
@@ -125,7 +103,7 @@ router.post("/login", (req, res) => {
 });
 
 // logout route
-router.get("/logout", function(req, res){
+router.get("/logout", (req, res) => {
   if (req.session) {
     // delete session object
     req.session.destroy(function(err) {
@@ -138,7 +116,7 @@ router.get("/logout", function(req, res){
   }
 });
 
-router.get('/profile', function(req,res){
+router.get('/profile', (req, res) => {
   let userID = req.session.userID;
   let cart = new Cart(req.session.cart ? req.session.cart : {});
 
@@ -167,114 +145,41 @@ router.post('/update-profile', (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
   
+  let error = null;
+
   if (username === "") {
     error = "Missing required field: Username"
-    sqlite.getUserDetails(userID, (err, userDetails) => {
-      sqlite.getUserPaymentDetails(userID, (err, userPaymentDetails) => {
-        res.render('profile', {
-          cartCount: cart.totalQty,
-          name: req.session.username,
-          userDetails: userDetails,
-          detailUpdateError: error,
-          userPaymentDetails: userPaymentDetails,
-          paymentUpdateError: null,
-          loginError: null,
-          registerError: null,
-          registerSuccess: null,
-          admin: req.session.isadmin
-        });
-      });
-    });
   } else if (email === "") {
     error = "Missing required field: Email"
-    sqlite.getUserDetails(userID, (err, userDetails) => {
-      sqlite.getUserPaymentDetails(userID, (err, userPaymentDetails) => {
-        res.render('profile', {
-          cartCount: cart.totalQty,
-          name: req.session.username,
-          userDetails: userDetails,
-          detailUpdateError: error,
-          userPaymentDetails: userPaymentDetails,
-          paymentUpdateError: null,
-          loginError: null,
-          registerError: null,
-          registerSuccess: null,
-          admin: req.session.isadmin
-        });
-      });
-    });
   } else if (password === "") {
     error = "Missing required field: Password"
-    sqlite.getUserDetails(userID, (err, userDetails) => {
-      sqlite.getUserPaymentDetails(userID, (err, userPaymentDetails) => {
-        res.render('profile', {
-          cartCount: cart.totalQty,
-          name: req.session.username,
-          userDetails: userDetails,
-          detailUpdateError: error,
-          userPaymentDetails: userPaymentDetails,
-          paymentUpdateError: null,
-          loginError: null,
-          registerError: null,
-          registerSuccess: null,
-          admin: req.session.isadmin
-        });
-      });
-    });
   } else {
     sqlite.updateProfile(username, email, password, userID, (err, result) => {
-      sqlite.getUserPaymentDetails(userID, (err, userPaymentDetails) => {
-        if (err) { 
-          if (err.errno == 19) {
-            sqlite.getUserDetails(userID, (errGetDetails, userDetails) => {
-              res.render('profile', {
-                cartCount: cart.totalQty,
-                name: req.session.username,
-                userDetails: userDetails,
-                detailUpdateError: "Username is already taken",
-                userPaymentDetails: userPaymentDetails,
-                paymentUpdateError: null,
-                loginError: null,
-                registerError: null,
-                registerSuccess: null,
-                admin: req.session.isadmin
-              });
-            });
-          } else {
-            sqlite.getUserDetails(userID, (errGetDetails, userDetails) => {
-              res.render('profile', {
-                cartCount: cart.totalQty,
-                name: req.session.username,
-                userDetails: userDetails,              
-                detailUpdateError: err,
-                userPaymentDetails: userPaymentDetails,
-                paymentUpdateError: null,
-                loginError: null,
-                registerError: null,
-                registerSuccess: null,
-                admin: req.session.isadmin
-              });
-            });
-          }
+      if (err) { 
+        if (err.errno == 19) {
+          error = "Username is already taken";
         } else {
-          sqlite.getUserDetails(userID, (err, userDetails) => {
-            res.render('profile', {
-              cartCount: cart.totalQty,
-              name: req.session.username,
-              userDetails: userDetails,            
-              detailUpdateError: null,
-              userPaymentDetails: userPaymentDetails,
-              paymentUpdateError: null,
-              loginError: null,
-              registerError: null,
-              registerSuccess: null,
-              admin: req.session.isadmin
-            });
-          });
+          error = err
         }
-      });
+      }    
     });
   }
+  sqlite.getUserDetails(userID, (err, userDetails) => {
+    sqlite.getUserPaymentDetails(userID, (err, userPaymentDetails) => {
+      res.render('profile', {
+        cartCount: cart.totalQty,
+        name: req.session.username,
+        userDetails: userDetails,            
+        detailUpdateError: error,
+        userPaymentDetails: userPaymentDetails,
+        paymentUpdateError: null,
+        loginError: null,
+        registerError: null,
+        registerSuccess: null,
+        admin: req.session.isadmin
+      });
+    });
+  });
 });
 
 router.post("/update-payment", (req, res) => {

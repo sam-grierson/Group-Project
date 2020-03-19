@@ -58,6 +58,8 @@ router.post("/checkout-logged-in", (req, res) => {
   let expiration = req.body.userExpiration;
   let cvc = req.body.userCvc;
 
+  let error = null;
+  
   // need to add input validation
 
   if (name && phoneNo && address && cardName && cardNo && expiration && cvc) {
@@ -65,62 +67,28 @@ router.post("/checkout-logged-in", (req, res) => {
     for (let i = 0; i < products.length; i++) {
       sqlite.insertOrder(name, phoneNo, address, cardName, cardNo, expiration, cart.totalPrice, products[i].qty, products[i].item.id, req.session.userID, (err, result) => {
         if (err) {
-          sqlite.getUserDetails(req.session.userID, (getUserDetailsError, userDetails) => {
-            sqlite.getUserPaymentDetails(req.session.userID,(getUserPaymentDetailsError, userPaymentDetails) => {
-              res.render("checkout", {
-                email: userDetails.email,
-                userPaymentDetails: userPaymentDetails,
-                userCheckoutError: err,
-                cartCount: cart.totalQty,
-                cartEmpty: cart.totalQty,
-                loggedIn: req.session.loggedin,
-                total: cart.totalPrice,
-                paymentSub: null,
-                name: req.session.username,
-                loginError: null,
-                registerError: null,
-                registerSuccess: null,
-                admin: req.session.isadmin
-              });
-            });
-          });
+          error = err;
         } else {
           cart.clearCart();
           req.session.cart = cart;
-          sqlite.getUserDetails(req.session.userID, (getUserDetailsError, userDetails) => {
-            sqlite.getUserPaymentDetails(req.session.userID,(getUserPaymentDetailsError, userPaymentDetails) => {
-              res.render("checkout", {
-                email: userDetails.email,
-                userPaymentDetails: userPaymentDetails,
-                userCheckoutError: null,
-                cartCount: cart.totalQty,
-                cartEmpty: cart.totalQty,
-                loggedIn: req.session.loggedin,
-                total: cart.totalPrice,
-                paymentSub: result,
-                name: req.session.username,
-                loginError: null,
-                registerError: null,
-                registerSuccess: null,
-                admin: req.session.isadmin
-              });
-            });
-          });
+          return result;
         }
       });
     }
   } else {
+      error = "Please fill out all the fields in the payment details form."
+  }
+  sqlite.getUserDetails(req.session.userID, (getUserDetailsError, userDetails) => {
     sqlite.getUserPaymentDetails(req.session.userID,(getUserPaymentDetailsError, userPaymentDetails) => {
-      let error = "Please fill out all the fields in the payment details form."
       res.render("checkout", {
-        email: null,
+        email: userDetails.email,
         userPaymentDetails: userPaymentDetails,
         userCheckoutError: error,
         cartCount: cart.totalQty,
         cartEmpty: cart.totalQty,
         loggedIn: req.session.loggedin,
         total: cart.totalPrice,
-        paymentSub: false,
+        paymentSub: result,
         name: req.session.username,
         loginError: null,
         registerError: null,
@@ -128,7 +96,7 @@ router.post("/checkout-logged-in", (req, res) => {
         admin: req.session.isadmin
       });
     });
-  }
+  });
 });
 
 // Guest checkout payments
