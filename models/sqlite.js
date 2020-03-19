@@ -306,4 +306,29 @@ module.exports = function Sqlite() {
       }
     });
   };
+
+  this.getOrderHistory = function(userID, callback){
+    let sql = `SELECT Price,productID,productQty,title FROM orders CROSS JOIN products ON products.id=orders.productID where customerID = ?`;
+    let db = new sqlite3.Database(database, (err) => {
+      if (err) {
+        return console.error(err);
+      }
+    });
+
+    db.all(sql, [userID], (err, row) => {
+
+      if (err) {
+        console.error(err);
+        return callback(err);
+      } else {
+        return callback(null, row);
+      }
+    });
+
+    db.close((err) => {
+      if (err) {
+        return console.error(err);
+      }
+    });
+  };
 };
