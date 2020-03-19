@@ -51,6 +51,18 @@
             </form>
         </div>
       </div>
+      <div class="w3-card-4" style="width:70%; margin: 25px;">
+        <div class="w3-container">
+          <p>Orders history</p>
+          <hr>
+          <%for(var i = 0; i < orderHistory.length; i++) {%>
+            <p>Cost: <%=orderHistory[i].Price%>/item</p>
+            <p>Product name: <%=orderHistory[i].title%></p>
+            <p>Quantity: <%=orderHistory[i].productQty%></p>
+            <hr>
+          <%}%>
+        </div>
+      </div>
     </div>
   </body>
   <%-include("templates/footer.ejs")-%>
