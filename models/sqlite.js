@@ -256,4 +256,54 @@ module.exports = function Sqlite() {
       }
     });
   };
+
+  this.removeItem = function(id, callback){
+    let sql = `DELETE from products WHERE id = ?`;
+
+    let db = new sqlite3.Database(database, (err) => {
+      if (err) {
+        return console.error(err);
+      }
+    });
+
+    db.get(sql, [id], (err, product) => {
+      if (err) {
+        console.error(err);
+        return callback(err);
+      } else {
+        return callback(null, product)
+      }
+    });
+
+    db.close((err) => {
+      if (err) {
+        return console.error(err)
+      }
+    });
+  };
+
+  this.addItem = function(title,price,image,stock, callback){
+    let sql = `INSERT INTO products(title,Price,image,stock) VALUES(?, ?, ?, ?)`
+
+    let db = new sqlite3.Database(database, (err) => {
+      if (err) {
+        console.error(err);
+      }
+    });
+
+    db.run(sql, [title,price,image,stock], (err, result) => {
+      if (err) {
+        console.error(err);
+        return callback(err);
+      } else {
+        return callback(null, result = true);
+      }
+    });
+
+    db.close((err) => {
+      if (err) {
+        return console.error(err);
+      }
+    });
+  };
 };
