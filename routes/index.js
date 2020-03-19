@@ -61,4 +61,54 @@ router.get("/add-cart/:id", (req, res) => {
   });
 });
 
+router.get("/removeItem/:id", (req, res) => {
+  let productId = req.params.id;
+
+  sqlite.removeItem(productId, (err, product) => {
+    if (err) {
+      res.redirect("/");
+    } else {
+      res.redirect("/");
+    }
+  });
+});
+
+router.get("/addItem", (req, res) => {
+  let session = req.session
+  let cart = new Cart(req.session.cart ? req.session.cart : {});
+
+  res.render('addItem', {
+    cartCount: cart.totalQty,
+    name: utils.getUser(session),
+    loginError: null,
+    registerError: null,
+    registerSuccess: null,
+    admin: req.session.isadmin,
+    itemAdded: false
+  });
+});
+
+router.post("/addItem", (req, res) => {
+  let session = req.session
+  let cart = new Cart(req.session.cart ? req.session.cart : {});
+
+  let title = req.body.title;
+  let price = req.body.price;
+  let image = 'assets/' + req.body.image + '.jpg';
+  let stock = req.body.stock;
+
+  sqlite.addItem(title,price,image,stock, (err) => {
+
+    res.render('addItem', {
+      cartCount: cart.totalQty,
+      name: utils.getUser(session),
+      loginError: null,
+      registerError: null,
+      registerSuccess: null,
+      admin: req.session.isadmin,
+      itemAdded: true
+    });
+  });
+});
+
 module.exports = router;
