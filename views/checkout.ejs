@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="eng">
   <!-- Head -->
-  <%-include("templates/head.ejs")-%>  
+  <%-include("templates/head.ejs")-%>
   <body>
     <!-- Nav -->
     <%-include("templates/nav.ejs")-%>
@@ -12,7 +12,7 @@
           <!-- User Current Payment Details -->
           <div class="w3-card-4" style="width:70%">
             <header class="w3-container w3-light-grey">
-              <h3>Confirm Payment Details</h3>   
+              <h3>Confirm Payment Details</h3>
             </header>
             <form method="POST" action="/checkout/checkout-logged-in">
               <div class="w3-container">
@@ -31,48 +31,46 @@
                 <%}%>
               </div>
               <button type="button" class="w3-button w3-block w3-dark-grey" onclick="editCheckout()">Edit</button>
+              <a class="cancelbtn1" href="/checkout/cancel">Cancel Order</a>
+              <button class="signupbtn w3-green" onclick="editCheckout()" type="submit">Confirm Order</button>
             </div>
-            <a class="cancelbtn1" href="/checkout/cancel">Cancel Order</a>
-            <button class="signupbtn" onclick="editCheckout()" type="submit">Confirm Order</button>
+
           </form>
         <%} else {%>
-          <h1>Checkout as guest</h1>
+
           <h3>Your Total: £<%=total%></h3>
           <!-- Guest Payment Form -->
-          <p>Continue making order as a guest or <a href="#" style="color:dodgerblue;" onclick="document.getElementById('id02').style.display='block'">create an account</a>?</p>   
-          <form method="POST" action="/checkout/checkout-guest">
-            <label for="firstname"><b>First Name</b></label>
-            <input class="signup" type="text" placeholder="Enter Firstname" name="firstname" required>
-            <label for="secondname"><b>Surname</b></label>
-            <input class="signup" type="text" placeholder="Enter Surname" name="secondname" required>
-            <label for="email"><b>Email</b></label>
-            <input class="signup" type="text" placeholder="Enter Email" name="email" required>
-            <label for="phoneNo"><b>Phone Number</b></label>
-            <input class="signup" type="text" placeholder="Enter Phone Number" name="phoneno" required>
-            <label for="address"><b>Address</b></label>
-            <input class="signup" type="text" placeholder="Enter Home Address" name="address" required>
-            <label for="cardname"><b>Credit Card Holder</b></label>
-            <input class="signup" type="text" placeholder="Enter the Card Holder Name" name="cardname" required>
-            <label for="cardno"><b>Credit Card Number</b></label>
-            <input class="signup" type="text" placeholder="Enter the Credit Card Number" name="cardno" required>
-            <label for="expmon"><b>Expiration Month</b></label>
-            <input class="signup" type="text" placeholder="Enter the Card Expiration Month" name="expmon" required>
-            <label for="expyr"><b>Expiration Year</b></label>
-            <input class="signup" type="text" placeholder="Enter the Card Expiration Year" name="expyr" required>
-            <label for="cvc"><b>CVC</b></label>
-            <input class="signup" type="text" placeholder="Enter the Card CVC" name="cvc" required>
-            <p>By making a purchase you agree to our <a href="#" style="color:dodgerblue;">Terms & Policy</a>.</p>
-            <a class="cancelbtn1" href="/checkout/cancel">Cancel Order</a>
-            <button class="signupbtn" type="submit">Confirm Order</button>
-          </form>
+          <p>Continue making order as a guest or <a href="#" style="color:dodgerblue;" onclick="document.getElementById('id02').style.display='block'">create an account</a>?</p>
+          <div class="w3-card-4" style="width:70%">
+            <header class="w3-container w3-light-grey">
+              <h3>Checkout as guest</h3>
+            </header>
+            <div class="w3-container">
+              <form method="POST" action="/checkout/checkout-guest">
+                <p>First Name: <input class="input-box" type="text" placeholder="Enter Firstname" name="firstname" required></p>
+                <p>Surname: <input class="input-box" type="text" placeholder="Enter Surname" name="secondname" required></p>
+                <p>Email: <input class="input-box" type="text" placeholder="Enter Email" name="email" required></p>
+                <p>Phone Number: <input class="input-box" type="text" placeholder="Enter Phone Number" name="phoneno" required></p>
+                <p>Address: <input class="input-box" type="text" placeholder="Enter Home Address" name="address" required></p>
+                <p>Credit Card Holder: <input class="input-box" type="text" placeholder="Enter the Card Holder Name" name="cardname" required></p>
+                <p>Credit Card Number: <input class="input-box" type="text" placeholder="Enter the Credit Card Number" name="cardno" required></p>
+                <p>Expiration Month: <input class="input-box" type="text" placeholder="Enter the Card Expiration Month" name="expmon" required></p>
+                <p>Expiration Year: <input class="input-box" type="text" placeholder="Enter the Card Expiration Year" name="expyr" required></p>
+                <p>CVC: <input class="input-box" type="text" placeholder="Enter the Card CVC" name="cvc" required></p>
+                <p>By making a purchase you agree to our <a href="#" style="color:dodgerblue;">Terms & Policy</a>.</p>
+                <a class="cancelbtn1" href="/checkout/cancel">Cancel Order</a>
+                <button class="signupbtn w3-green" type="submit">Confirm Order</button>
+              </form>
+            </div>
+          </div>
         <%}%>
         <%if (paymentSub) {%>
-          <div class="login_div" style="display: block;">
-            <div class="log-content animatelog" id="id01">
-              <div class="logcontainer" style="background-color:#f1f1f1;">
+          <div class="w3-modal" style="display: block;">
+            <div class="w3-modal-content w3-border w3-round-large" id="id01">
+              <div class="w3-container w3-border w3-round-large" style="background-color:#f1f1f1;">
                 <h1>Your order was placed successfully!</h1>
                 <p>Your order has been placed successfully, an invoice and estimated delivery time will be sent to the email address: <%=email%></p>
-                <a href="/" class="bb" style="text-decoration: none;">Return to Home Page</a>
+                <a href="/" class="w3-button w3-border w3-round-large w3-dark-grey" style="text-decoration: none;">Return to Home Page</a>
               </div>
             </div>
           </div>
