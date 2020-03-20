@@ -59,24 +59,28 @@ router.post("/checkout-logged-in", (req, res) => {
   let cvc = req.body.userCvc;
 
   let error = null;
-  
-  // need to add input validation
+  function checkError(error) {
+    if (error === null) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   if (name && phoneNo && address && cardName && cardNo && expiration && cvc) {
     products = cart.generateArray();
     for (let i = 0; i < products.length; i++) {
-      sqlite.insertOrder(name, phoneNo, address, cardName, cardNo, expiration, cart.totalPrice, products[i].qty, products[i].item.id, req.session.userID, (err, result) => {
+      sqlite.insertOrder(name, phoneNo, address, cardName, cardNo, expiration, cart.totalPrice, products[i].item.id, products[i].qty, req.session.userID, (err, result) => {
         if (err) {
           error = err;
         } else {
           cart.clearCart();
           req.session.cart = cart;
-          return result;
-        }
+        };
       });
     }
   } else {
-      error = "Please fill out all the fields in the payment details form."
+    error = "Please fill out all the fields in the payment details form."
   }
   sqlite.getUserDetails(req.session.userID, (getUserDetailsError, userDetails) => {
     sqlite.getUserPaymentDetails(req.session.userID,(getUserPaymentDetailsError, userPaymentDetails) => {
@@ -88,7 +92,7 @@ router.post("/checkout-logged-in", (req, res) => {
         cartEmpty: cart.totalQty,
         loggedIn: req.session.loggedin,
         total: cart.totalPrice,
-        paymentSub: result,
+        paymentSub: checkError(error),
         name: req.session.username,
         loginError: null,
         registerError: null,

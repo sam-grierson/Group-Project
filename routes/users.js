@@ -29,7 +29,7 @@ router.post("/register", (req, res, next) => {
       error = "Passwords don't match";
     } else {
       sqlite.registerUser(username, password, email, (err, result) => {
-        if (err) { 
+        if (err) {
           if (err.errno == 19) {
             return error = "Username has already been taken.";
           } else {
@@ -122,17 +122,20 @@ router.get('/profile', (req, res) => {
 
   sqlite.getUserDetails(userID, (err, userDetails) => {
     sqlite.getUserPaymentDetails(userID, (err, userPaymentDetails) => {
-      res.render('profile', {
-        cartCount: cart.totalQty,
-        name: req.session.username,
-        userDetails: userDetails,
-        detailUpdateError: null,
-        userPaymentDetails: userPaymentDetails,
-        paymentUpdateError: null,
-        loginError: null,
-        registerError: null,
-        registerSuccess: null,
-        admin: req.session.isadmin
+      sqlite.getOrderHistory(userID, (err, orders) => {
+        res.render('profile', {
+          cartCount: cart.totalQty,
+          name: req.session.username,
+          userDetails: userDetails,
+          detailUpdateError: null,
+          userPaymentDetails: userPaymentDetails,
+          paymentUpdateError: null,
+          loginError: null,
+          registerError: null,
+          registerSuccess: null,
+          admin: req.session.isadmin,
+          orderHistory: orders
+        });
       });
     });
   });
@@ -207,23 +210,26 @@ router.post("/update-payment", (req, res) => {
     expiration = null;
   } else if (cvc === "") {
     cvc = null;
-  }  
+  }
 
   sqlite.updatePaymentDetails(name, phoneNo, address, cardName, cardNo, expiration, cvc, userID, (err, result) => {
     if (err) {
       sqlite.getUserDetails(userID, (userDetailsError, userDetails) => {
         sqlite.getUserPaymentDetails(userID, (userPaymentDetialsError, userPaymentDetails) => {
-          res.render('profile', {
-            cartCount: cart.totalQty,
-            name: req.session.username,
-            userDetails: userDetails,
-            detailUpdateError: null,
-            userPaymentDetails: userPaymentDetails,
-            paymentUpdateError: err,
-            loginError: null,
-            registerError: null,
-            registerSuccess: null,
-            admin: req.session.isadmin
+          sqlite.getOrderHistory(userID, (err, orders) => {
+            res.render('profile', {
+              cartCount: cart.totalQty,
+              name: req.session.username,
+              userDetails: userDetails,
+              detailUpdateError: null,
+              userPaymentDetails: userPaymentDetails,
+              paymentUpdateError: err,
+              loginError: null,
+              registerError: null,
+              registerSuccess: null,
+              admin: req.session.isadmin,
+              orderHistory: orders
+            });
           });
         });
       });

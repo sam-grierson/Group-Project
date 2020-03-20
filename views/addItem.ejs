@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="eng">
+  <%-include("templates/head.ejs")-%>
+  <body>
+    <!--Nav bar-->
+    <%-include("templates/nav.ejs")-%>
+
+    <div class="w3-container w3-middle" style="margin-top: 55px;">
+      <div class="w3-card-4" style="width:70%; margin: 25px;">
+        <header class="w3-container w3-light-grey">
+          <%if (name){%>
+            <h3><%=name%></h3>
+          <%}%>
+        </header>
+        <div class="w3-container">
+          <p>Item detail</p>
+          <hr>
+            <form action="/AddItem" method="POST">
+              <p>Title: <input id="title" type="text" value="" name="title"></p>
+              <p>Price: <input id="price" type="text" value="" name="price"></p>
+              <p>Image path: <input id="image" type="text" value="" name="image"></p>
+              <p>Stock: <input id="image" type="text" value="" name="stock"></p>
+            <br>
+            <button type="submit" class="w3-button w3-block w3-dark-grey" id="editProfile">Add Item</button>
+            </form>
+        </div>
+      </div>
+      <%if (itemAdded) {%>
+        <div class="login_div" style="display: block;">
+          <div class="log-content animatelog" id="id01">
+            <div class="logcontainer" style="background-color:#f1f1f1;">
+              <h1>Item added successfully!</h1>              
+              <a href="/" class="bb" style="text-decoration: none;">Return to Home Page</a>
+            </div>
+          </div>
+        </div>
+      <%}%>
+    </div>
+  </body>
+  <%-include("templates/footer.ejs")-%>
+</html>

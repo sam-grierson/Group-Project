@@ -4,8 +4,8 @@
   <body>
     <!--Nav bar-->
     <%-include("templates/nav.ejs")-%>
-    <div class="w3-container w3-middle">
-      <h2>Card Example</h2>
+    <div class="w3-container w3-middle" style="margin-top: 55px;">
+
       <div class="w3-card-4" style="width:70%; margin: 25px;">
         <header class="w3-container w3-light-grey">
           <%if (name){%>
@@ -49,6 +49,18 @@
             <button class="w3-button w3-block w3-green" type="submit" style="display:none" id="savePayment">save changes</button>
             <a class="w3-button w3-block w3-red" style="display:none" id="cancelPayment" onclick="cancelPayment()">cancel</a>
             </form>
+        </div>
+      </div>
+      <div class="w3-card-4" style="width:70%; margin: 25px;">
+        <div class="w3-container">
+          <p>Orders history</p>
+          <hr>
+          <%for(var i = 0; i < orderHistory.length; i++) {%>
+            <p>Cost: <%=orderHistory[i].Price%>/item</p>
+            <p>Product name: <%=orderHistory[i].title%></p>
+            <p>Quantity: <%=orderHistory[i].productQty%></p>
+            <hr>
+          <%}%>
         </div>
       </div>
     </div>
