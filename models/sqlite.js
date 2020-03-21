@@ -90,14 +90,14 @@ module.exports = function Sqlite() {
   };
 
   this.loginUser = function(username, password, callback) {
-    let sql = `SELECT * FROM users WHERE username = ? AND password = ?`;
+    let sql = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
     let db = new sqlite3.Database(database, (err) => {
       if (err) {
         return console.error(err);
       }
     });
 
-    db.get(sql, [username, password], (err, row) => {
+    db.get(sql, (err, row) => {
       if (err) {
         console.error(err);
         return callback(err);
