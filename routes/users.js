@@ -70,7 +70,8 @@ router.post("/login", (req, res) => {
             loginError: err,
             registerError: null,
             registerSuccess: null,
-            admin: req.session.isadmin
+            admin: req.session.isadmin,
+            searched: null
           });
         });
       } else if (!row) {
@@ -82,7 +83,8 @@ router.post("/login", (req, res) => {
             loginError: "Invalid username/password.",
             registerError: null,
             registerSuccess: null,
-            admin: req.session.isadmin
+            admin: req.session.isadmin,
+            searched: null
           });
         });
       } else if (username == "Admin") {
@@ -147,7 +149,7 @@ router.post('/update-profile', (req, res) => {
   let username = req.body.username;
   let email = req.body.email;
   let password = req.body.password;
-  
+
   let error = null;
 
   if (username === "") {
@@ -158,13 +160,13 @@ router.post('/update-profile', (req, res) => {
     error = "Missing required field: Password"
   } else {
     sqlite.updateProfile(username, email, password, userID, (err, result) => {
-      if (err) { 
+      if (err) {
         if (err.errno == 19) {
           error = "Username is already taken";
         } else {
           error = err
         }
-      }    
+      }
     });
   }
   sqlite.getUserDetails(userID, (err, userDetails) => {
@@ -172,7 +174,7 @@ router.post('/update-profile', (req, res) => {
       res.render('profile', {
         cartCount: cart.totalQty,
         name: req.session.username,
-        userDetails: userDetails,            
+        userDetails: userDetails,
         detailUpdateError: error,
         userPaymentDetails: userPaymentDetails,
         paymentUpdateError: null,

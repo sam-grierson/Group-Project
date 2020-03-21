@@ -18,7 +18,8 @@ router.get("/", (req, res) => {
       loginError: null,
       registerError:null,
       registerSuccess: null,
-      admin: req.session.isadmin
+      admin: req.session.isadmin,
+      searched: null
     });
   });
 });
@@ -31,7 +32,16 @@ router.post("/search", (req, res) => {
   sqlite.searchProduct(criteria, (err, result) => {
     if (err) {
       console.error(err);
-      return res.redirect("/");
+      res.render("index",{
+        cartCount: cart.totalQty,
+        name: utils.getUser(session),
+        products: [],
+        loginError: null,
+        registerError: null,
+        registerSuccess: null,
+        admin: req.session.isadmin,
+        searched: criteria
+      });
     } else {
       res.render("index",{
         cartCount: cart.totalQty,
@@ -40,7 +50,8 @@ router.post("/search", (req, res) => {
         loginError: null,
         registerError: null,
         registerSuccess: null,
-        admin: req.session.isadmin
+        admin: req.session.isadmin,
+        searched: criteria
       });
     }
   });
