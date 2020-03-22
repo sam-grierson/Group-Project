@@ -158,7 +158,7 @@ router.post('/update-profile', (req, res) => {
   if (username === "") {
     error = "Missing required field: Username"
   } else if (email === "") {
-    rror = "Missing required field: Email"
+    error = "Missing required field: Email"
   } else if (password === "") {
     error = "Missing required field: Password"
   } else if (validate.isEmail(email) === false) {
