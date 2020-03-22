@@ -15,6 +15,7 @@ router.get("/", (req, res) => {
         email: null,
         userPaymentDetails: userPaymentDetails,
         userCheckoutError: null,
+        guestCheckoutError: null,
         cartCount: cart.totalQty,
         cartEmpty: cart.totalQty,
         loggedIn: req.session.loggedin,
@@ -32,6 +33,7 @@ router.get("/", (req, res) => {
       email: null,
       userPaymentDetails: null,
       userCheckoutError: null,
+      guestCheckoutError: null,
       cartCount: cart.totalQty,
       cartEmpty: cart.totalQty,
       loggedIn: req.session.loggedin,
@@ -57,8 +59,8 @@ router.post("/checkout-logged-in", (req, res) => {
   let cardNo = req.body.userCardNo;
   let expiration = req.body.userExpiration;
   let cvc = req.body.userCvc;
-
   let error = null;
+
   function checkError(error) {
     if (error === null) {
       return true;
@@ -67,7 +69,21 @@ router.post("/checkout-logged-in", (req, res) => {
     }
   };
 
-  if (name && phoneNo && address && cardName && cardNo && expiration && cvc) {
+  if (name === "") {
+    name = null;
+  } else if (validate.isPhoneNumber(phoneNo) === false) {
+    error = "Invalid Phone Number";
+  } else if (address === "") {
+    address = null;
+  } else if (cardName === "") {
+    cardName = null;
+  } else if (validate.isVisaCard(cardNo) === false && validate.isMasterCard(cardNo) === false) {
+    error = "Invalid Payment information: This site only accepts Visa or Master card";
+  } else if (validate.isCvc(cvc) === false) {
+    error = "Invalid Payment information: Invalid CVC";
+  } else if (validate.isExpiration(expiration) === false) {
+    error = "Invalid Payment information: Invalid expiration (please use the format MM/YY)";
+  } else if (name && phoneNo && address && cardName && cardNo && expiration && cvc) {
     products = cart.generateArray();
     for (let i = 0; i < products.length; i++) {
       sqlite.insertOrder(name, phoneNo, address, cardName, cardNo, expiration, cart.totalPrice, products[i].item.id, products[i].qty, req.session.userID, (err, result) => {
@@ -80,7 +96,7 @@ router.post("/checkout-logged-in", (req, res) => {
       });
     }
   } else {
-    error = "Please fill out all the fields in the payment details form."
+    error = "Please fill out all the fields in the payment details form"
   }
   sqlite.getUserDetails(req.session.userID, (getUserDetailsError, userDetails) => {
     sqlite.getUserPaymentDetails(req.session.userID,(getUserPaymentDetailsError, userPaymentDetails) => {
@@ -88,6 +104,7 @@ router.post("/checkout-logged-in", (req, res) => {
         email: userDetails.email,
         userPaymentDetails: userPaymentDetails,
         userCheckoutError: error,
+        guestCheckoutError: null,
         cartCount: cart.totalQty,
         cartEmpty: cart.totalQty,
         loggedIn: req.session.loggedin,
@@ -116,21 +133,51 @@ router.post("/checkout-guest", (req, res) => {
   let cardNo = req.body.firstname;
   let expMon = req.body.expmon;
   let expYr = req.body.expyr;
+  let cvc = req.body.cvc;
+  let error = null;
 
-  // need to add input validation
+  function checkError(error) {
+    if (error === null) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
-  cart.clearCart();
-  req.session.cart = cart;
-
+  if (firstName === "") {
+    firstName = null;
+  } else if (surname === "") {
+      surname = null;
+  } else if (validate.isPhoneNumber(phoneNo) === false) {
+    error = "Invalid phone number";
+  } else if (validate.isEmail(email) === false) {
+    error = "Invalid email address"; 
+  } else if (address === "") {
+    address = null;
+  } else if (cardName === "") {
+    cardName = null;
+  } else if (validate.isVisaCard(cardNo) === false && validate.isMasterCard(cardNo) === false) {
+    error = "Invalid Payment information: This site only accepts Visa or Master card";
+  } else if (validate.isMonth(expMon) === false && validate.isYear(expYr) === false) {
+    error = "Invalid Payment information: Invalid expiration";
+  } else if (validate.isCvc(cvc) === false) {
+    error = "Invalid Payment information: Invalid CVC";
+  } else if (name && phoneNo && address && cardName && cardNo && expiration && cvc) {    
+    cart.clearCart();
+    req.session.cart = cart;
+  } else {
+    error = "Please fill out all the fields in the payment details form.";
+  }
   res.render("checkout", {
     email: email,
     userPaymentDetails: null,
     userCheckoutError: null,
+    guestCheckoutError: error,
     cartCount: cart.totalQty,
     cartEmpty: cart.totalQty,
     loggedIn: req.session.loggedin,
     total: cart.totalPrice,
-    paymentSub: true,
+    paymentSub: checkError(error),
     name: null,
     loginError: null,
     registerError: null,
