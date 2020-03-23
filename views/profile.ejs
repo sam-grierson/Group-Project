@@ -34,13 +34,13 @@
           <p>Payment Details</p>
           <hr>
             <form action="/users/update-payment" method="POST">
-              <p>Name: <input id="name" type="text" value="<%=userPaymentDetails.name%>" name="name" disabled=></p>
-              <p>Phone Number: <input id="phoneNo" type="text" value="<%=userPaymentDetails.phoneNo%>" name="phoneNo" disabled></p>
-              <p>Address: <input id="address" type="text" value="<%=userPaymentDetails.address%>" name="address" disabled></p>
-              <p>Credit card holder: <input id="cardName" type="text" value="<%=userPaymentDetails.cardName%>" name="cardName" disabled></p>
-              <p>Card number: <input id="cardNo" type="text" value="<%=userPaymentDetails.cardNo%>" name="cardNo" disabled></p>
-              <p>Card expiration: <input id="expiration" type="text" value="<%=userPaymentDetails.expiry%>" name="expiration" disabled></p>
-              <p>CVC: <input id="cvc" type="text" value="<%=userPaymentDetails.cvc%>" name="cvc" disabled></p>
+              <p>Name: <input id="name" type="text" value="<%-userPaymentDetails.name%>" name="name" disabled></p>
+              <p>Phone Number: <input id="phoneNo" type="text" value="<%-userPaymentDetails.phoneNo%>" name="phoneNo" disabled></p>
+              <p>Address: <input id="address" type="text" value="<%-userPaymentDetails.address%>" name="address" disabled></p>
+              <p>Credit card holder: <input id="cardName" type="text" value="<%-userPaymentDetails.cardName%>" name="cardName" disabled></p>
+              <p>Card number: <input id="cardNo" type="text" value="<%-userPaymentDetails.cardNo%>" name="cardNo" disabled></p>
+              <p>Card expiration: <input id="expiration" type="text" value="<%-userPaymentDetails.expiry%>" name="expiration" disabled></p>
+              <p>CVC: <input id="cvc" type="text" value="<%-userPaymentDetails.cvc%>" name="cvc" disabled></p>
             <br>
             <%if (paymentUpdateError) {%>
               <p style="color:red"><%=paymentUpdateError%></p>
