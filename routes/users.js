@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const utils = require("../lib/utils");
+const validate = require("../lib/validate");
 const Cart = require("../models/cart");
 const Sqlite = require("../models/sqlite");
 const sqlite = new Sqlite();
@@ -27,6 +28,8 @@ router.post("/register", (req, res, next) => {
   if (username && email && password && passwordTwo) {
     if (password !== passwordTwo) {
       error = "Passwords don't match";
+    } else if (validate.isEmail(email) === false) {
+      error = "Invalid email address";
     } else {
       sqlite.registerUser(username, password, email, (err, result) => {
         if (err) {
@@ -46,7 +49,8 @@ router.post("/register", (req, res, next) => {
         loginError: null,
         registerError: error,
         registerSuccess: checkError(error),
-        admin: req.session.isadmin
+        admin: req.session.isadmin,
+        searched: null
       });
     });
   }
@@ -151,13 +155,14 @@ router.post('/update-profile', (req, res) => {
   let password = req.body.password;
 
   let error = null;
-
   if (username === "") {
     error = "Missing required field: Username"
   } else if (email === "") {
     error = "Missing required field: Email"
   } else if (password === "") {
     error = "Missing required field: Password"
+  } else if (validate.isEmail(email) === false) {
+    error = "Invalid email address";
   } else {
     sqlite.updateProfile(username, email, password, userID, (err, result) => {
       if (err) {
@@ -171,17 +176,20 @@ router.post('/update-profile', (req, res) => {
   }
   sqlite.getUserDetails(userID, (err, userDetails) => {
     sqlite.getUserPaymentDetails(userID, (err, userPaymentDetails) => {
-      res.render('profile', {
-        cartCount: cart.totalQty,
-        name: req.session.username,
-        userDetails: userDetails,
-        detailUpdateError: error,
-        userPaymentDetails: userPaymentDetails,
-        paymentUpdateError: null,
-        loginError: null,
-        registerError: null,
-        registerSuccess: null,
-        admin: req.session.isadmin
+      sqlite.getOrderHistory(userID, (err, orders) => {
+        res.render('profile', {
+          cartCount: cart.totalQty,
+          name: req.session.username,
+          userDetails: userDetails,
+          detailUpdateError: error,
+          userPaymentDetails: userPaymentDetails,
+          paymentUpdateError: null,
+          loginError: null,
+          registerError: null,
+          registerSuccess: null,
+          admin: req.session.isadmin,
+          orderHistory: orders
+        });
       });
     });
   });
@@ -197,47 +205,52 @@ router.post("/update-payment", (req, res) => {
   let cardNo = req.body.cardNo;
   let expiration = req.body.expiration;
   let cvc = req.body.cvc;
+  let error = null;
+
+  console.log(cardNo);
+  console.log(validate.isVisaCard(cardNo));
 
   if (name === "") {
     name = null;
-  } else if (phoneNo === "") {
-    phoneNo = null;
+  } else if (validate.isPhoneNumber(phoneNo) === false) {
+    error = "Invalid Phone Number";
   } else if (address === "") {
     address = null;
   } else if (cardName === "") {
     cardName = null;
-  } else if (cardNo === "") {
-    cardNo = null;
-  } else if (expiration === "") {
-    expiration = null;
-  } else if (cvc === "") {
-    cvc = null;
-  }
+  } else if (validate.isVisaCard(cardNo) === false && validate.isMasterCard(cardNo) === false) {
+    error = "Invalid Payment information: This site only accepts Visa or Master card";
+  } else if (validate.isCvc(cvc) === false) {
+    error = "Invalid Payment information: Invalid CVC";
+  } else if (validate.isExpiration(expiration) === false) {
+    error = "Invalid Payment information: Invalid expiration (please use the format MM/YY)";
+  } 
 
-  sqlite.updatePaymentDetails(name, phoneNo, address, cardName, cardNo, expiration, cvc, userID, (err, result) => {
-    if (err) {
-      sqlite.getUserDetails(userID, (userDetailsError, userDetails) => {
-        sqlite.getUserPaymentDetails(userID, (userPaymentDetialsError, userPaymentDetails) => {
-          sqlite.getOrderHistory(userID, (err, orders) => {
-            res.render('profile', {
-              cartCount: cart.totalQty,
-              name: req.session.username,
-              userDetails: userDetails,
-              detailUpdateError: null,
-              userPaymentDetails: userPaymentDetails,
-              paymentUpdateError: err,
-              loginError: null,
-              registerError: null,
-              registerSuccess: null,
-              admin: req.session.isadmin,
-              orderHistory: orders
-            });
-          });
+  if (error === null) {
+    sqlite.updatePaymentDetails(name, phoneNo, address, cardName, cardNo, expiration, cvc, userID, (err, result) => {
+      if (err) {
+        error = err;
+      }
+    });
+  }
+  sqlite.getUserDetails(userID, (userDetailsError, userDetails) => {
+    sqlite.getUserPaymentDetails(userID, (userPaymentDetialsError, userPaymentDetails) => {
+      sqlite.getOrderHistory(userID, (getOrderHistoryError, orders) => {
+        res.render('profile', {
+          cartCount: cart.totalQty,
+          name: req.session.username,
+          userDetails: userDetails,
+          detailUpdateError: null,
+          userPaymentDetails: userPaymentDetails,
+          paymentUpdateError: error,
+          loginError: null,
+          registerError: null,
+          registerSuccess: null,
+          admin: req.session.isadmin,
+          orderHistory: orders
         });
       });
-    } else {
-      res.redirect("/users/profile");
-    }
+    });
   });
 });
 

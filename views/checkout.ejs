@@ -57,7 +57,10 @@
                 <p>Expiration Month: <input class="input-box" type="text" placeholder="Enter the Card Expiration Month" name="expmon" required></p>
                 <p>Expiration Year: <input class="input-box" type="text" placeholder="Enter the Card Expiration Year" name="expyr" required></p>
                 <p>CVC: <input class="input-box" type="text" placeholder="Enter the Card CVC" name="cvc" required></p>
-                <p>By making a purchase you agree to our <a href="#" style="color:dodgerblue;">Terms & Policy</a>.</p>
+                <p>By making a purchase you agree to our <a href="#" style="color:dodgerblue;">Terms & Policy</a>.</p>  
+                <%if (guestCheckoutError) {%>
+                  <p style="color:red"><%=guestCheckoutError%></p>
+                <%}%>
                 <a class="cancelbtn1" href="/checkout/cancel">Cancel Order</a>
                 <button class="signupbtn w3-green" type="submit">Confirm Order</button>
               </form>
