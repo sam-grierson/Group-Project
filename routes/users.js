@@ -92,7 +92,7 @@ router.post("/login", (req, res) => {
             searched: null
           });
         });
-      } else if (username == "Admin") {
+      } else if (row.username == "Admin") {
         req.session.isadmin = true;
         req.session.loggedin = true;
         req.session.username = row.username;
