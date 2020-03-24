@@ -95,13 +95,13 @@ router.post("/login", (req, res) => {
       } else if (username == "Admin") {
         req.session.isadmin = true;
         req.session.loggedin = true;
-        req.session.username = username;
+        req.session.username = row.username;
         req.session.userID = row.id;
         res.redirect("/");
       } else {
         req.session.isadmin = false;
         req.session.loggedin = true;
-        req.session.username = username;
+        req.session.username = row.username;
         req.session.userID = row.id;
         res.redirect("/");
       }
