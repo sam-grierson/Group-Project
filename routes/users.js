@@ -3,6 +3,7 @@ const router = express.Router();
 
 const utils = require("../lib/utils");
 const validate = require("../lib/validate");
+const insecurity = require("../lib/insecurity");
 const Cart = require("../models/cart");
 const Sqlite = require("../models/sqlite");
 const sqlite = new Sqlite();
@@ -31,7 +32,7 @@ router.post("/register", (req, res, next) => {
     } else if (validate.isEmail(email) === false) {
       error = "Invalid email address";
     } else {
-      sqlite.registerUser(username, password, email, (err, result) => {
+      sqlite.registerUser(username, insecurity.hash(password), email, (err, result) => {
         if (err) {
           if (err.errno == 19) {
             return error = "Username has already been taken.";
@@ -64,7 +65,7 @@ router.post("/login", (req, res) => {
   let cart = new Cart(req.session.cart ? req.session.cart : {});
 
   if (username && password) {
-    sqlite.loginUser(username, password, (err, row) => {
+    sqlite.loginUser(username, insecurity.hash(password), (err, row) => {
       if (err) {
         sqlite.getProducts((productErr, products) => {
           res.render("index", {
@@ -164,7 +165,7 @@ router.post('/update-profile', (req, res) => {
   } else if (validate.isEmail(email) === false) {
     error = "Invalid email address";
   } else {
-    sqlite.updateProfile(username, email, password, userID, (err, result) => {
+    sqlite.updateProfile(username, email, insecurity.hash(password), userID, (err, result) => {
       if (err) {
         if (err.errno == 19) {
           error = "Username is already taken";
@@ -206,9 +207,6 @@ router.post("/update-payment", (req, res) => {
   let expiration = req.body.expiration;
   let cvc = req.body.cvc;
   let error = null;
-
-  console.log(cardNo);
-  console.log(validate.isVisaCard(cardNo));
 
   if (name === "") {
     name = null;

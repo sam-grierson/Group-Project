@@ -4,6 +4,7 @@ const router = express.Router();
 const Cart = require("../models/cart");
 const Sqlite = require("../models/sqlite");
 const sqlite = new Sqlite();
+const validate = require("../lib/validate")
 
 router.get("/", (req, res) => {
   let cart = new Cart(req.session.cart);
