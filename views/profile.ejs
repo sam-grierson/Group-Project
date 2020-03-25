@@ -15,7 +15,7 @@
         <div class="w3-container">
           <p>Profile detail</p>
           <hr>
-            <form action="/users/update-profile" method="POST">
+            <form action="/profile/update-profile" method="POST">
               <p>Username: <input id="user" type="text" value="<%=userDetails.username%>" disabled name="username"></p>
               <p>Email: <input id="email" type="text" value="<%=userDetails.email%>" disabled name="email"></p>
               <p>Password: <input id="pass" type="password" value="<%=userDetails.password%>" disabled name="password"></p>
@@ -33,7 +33,7 @@
         <div class="w3-container">
           <p>Payment Details</p>
           <hr>
-            <form action="/users/update-payment" method="POST">
+            <form action="/profile/update-payment" method="POST">
               <p>Name: <input id="name" type="text" value="<%-userPaymentDetails.name%>" name="name" disabled></p>
               <p>Phone Number: <input id="phoneNo" type="text" value="<%-userPaymentDetails.phoneNo%>" name="phoneNo" disabled></p>
               <p>Address: <input id="address" type="text" value="<%-userPaymentDetails.address%>" name="address" disabled></p>

@@ -25,11 +25,11 @@
             <div class="w3-dropdown-content w3-bar-block w3-card-5" style="right:0">
               <%if (admin) {%>
                 <a href="/users/logout" class="w3-bar-item w3-button">Logout</a>
-                <a href="/users/profile" class="w3-bar-item w3-button">Profile</a>
+                <a href="/profile" class="w3-bar-item w3-button">Profile</a>
                 <a href="/addItem" class="w3-bar-item w3-button">Add Item</a>
               <%} else if (name) {%>
                 <a href="/users/logout" class="w3-bar-item w3-button">Logout</a>
-                <a href="/users/profile" class="w3-bar-item w3-button">Profile</a>
+                <a href="/profile" class="w3-bar-item w3-button">Profile</a>
               <%} else {%>
                 <a onclick="document.getElementById('id01').style.display='block'" class="w3-bar-item w3-button">Login</a>
                 <a onclick="document.getElementById('id01').style.display='none'; document.getElementById('id02').style.display='block'" class="w3-bar-item w3-button">Register</a>
