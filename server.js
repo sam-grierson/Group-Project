@@ -11,6 +11,7 @@ const indexRoute = require("./routes/index");
 const usersRoute = require("./routes/users");
 const cartRoute = require("./routes/cart");
 const checkoutRoute = require("./routes/checkout");
+const profileRoute = require("./routes/profile");
 
 db.serialize(() => {
   db.run("CREATE TABLE IF NOT EXISTS users('id' INTEGER PRIMARY KEY AUTOINCREMENT, 'username' TEXT NOT NULL UNIQUE, 'password' TEXT NOT NULL, 'email' TEXT NOT NULL)");
@@ -44,5 +45,6 @@ app.use("/", indexRoute);
 app.use("/users", usersRoute);
 app.use("/cart", cartRoute);
 app.use("/checkout", checkoutRoute);
+app.use("/profile", profileRoute);
 
 app.listen(3000, () => console.log("Server started"));
