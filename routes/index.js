@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const nodemailer = require("nodemailer");
 
 const Cart = require("../models/cart");
 const Sqlite = require("../models/sqlite");
@@ -120,6 +121,64 @@ router.post("/addItem", (req, res) => {
       itemAdded: true
     });
   });
+});
+
+router.post('/send', function(req, res) {
+  const output = `
+  You have a new message From
+
+  Name: ${req.body.Name}
+  Email: ${req.body.Email}
+  Subject: ${req.body.Subject}
+
+  Message: ${req.body.Message}
+  `;
+
+  async function main() {
+    let testAccount = await nodemailer.createTestAccount();
+
+    let transporter = nodemailer.createTransport({
+      host: "smtp.ethereal.email",
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: testAccount.user, // generated ethereal user
+        pass: testAccount.pass // generated ethereal password
+      }
+    });
+
+    let info = await transporter.sendMail({
+      from: '"Fred Foo 👻" <foo@example.com>', // sender address
+      to: "bar@example.com, baz@example.com", // list of receivers
+      subject: "Issue", // Subject line
+      text: output
+    });
+
+    console.log("Message sent: %s", info.messageId);
+
+    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+
+    /*let mailOptions = {
+      from: 'grouprojectpen@gmail.com',
+      to: 'grouprojectpen@gmail.com',
+      subject: 'Issue',
+      text: output
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });*/
+  }
+
+  main().catch(console.error);
+
+
+
+  res.redirect('/');
 });
 
 module.exports = router;
