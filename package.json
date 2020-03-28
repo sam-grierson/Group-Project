@@ -15,10 +15,7 @@
     "express": "^4.17.1",
     "express-jwt": "^5.3.1",
     "express-session": "^1.17.0",
-<<<<<<< HEAD
     "jsonwebtoken": "^8.5.1",
-=======
->>>>>>> 5b01af1f90cc9bd7c82046a3d5599316af6702d9
     "nodemailer": "^6.4.6",
     "sqlite3": "^4.1.1"
   },
