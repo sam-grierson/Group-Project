@@ -53,6 +53,7 @@ router.post("/search", (req, res) => {
         admin: req.session.isadmin,
         searched: criteria
       });
+      console.log(result);
     }
   });
 });
