@@ -34,25 +34,39 @@ router.post("/register", (req, res, next) => {
       sqlite.registerUser(username, insecurity.hash(password), email, (err, result) => {
         if (err) {
           if (err.errno == 19) {
-            return error = "Username has already been taken.";
+            error = "Username has already been taken.";
           } else {
-            return error = err;
+            error = err;
           }
         }
+        sqlite.getProducts((productsErr, products) => {
+          res.render("index", {
+            cartCount: cart.totalQty,
+            name: utils.getUser(session),
+            products: products,
+            loginError: null,
+            registerError: error,
+            registerSuccess: checkError(error),
+            admin: req.session.isadmin,
+            searched: null
+          });
+        });
       });
     }
-    sqlite.getProducts((productsErr, products) => {
-      res.render("index", {
-        cartCount: cart.totalQty,
-        name: utils.getUser(session),
-        products: products,
-        loginError: null,
-        registerError: error,
-        registerSuccess: checkError(error),
-        admin: req.session.isadmin,
-        searched: null
+    if (error !== null) {
+      sqlite.getProducts((productsErr, products) => {
+        res.render("index", {
+          cartCount: cart.totalQty,
+          name: utils.getUser(session),
+          products: products,
+          loginError: null,
+          registerError: error,
+          registerSuccess: checkError(error),
+          admin: req.session.isadmin,
+          searched: null
+        });
       });
-    });
+    }
   }
 });
 
@@ -97,6 +111,8 @@ router.post("/login", (req, res) => {
         req.session.userID = row.id;
         res.redirect("/");
       } else {
+        token = insecurity.authorize({ userID: row.id, username: row.username });
+        console.log(token);
         req.session.isadmin = false;
         req.session.loggedin = true;
         req.session.username = row.username;
