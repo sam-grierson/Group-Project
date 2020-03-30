@@ -5,8 +5,7 @@ const utils = require("../lib/utils");
 const validate = require("../lib/validate");
 const insecurity = require("../lib/insecurity");
 const Cart = require("../models/cart");
-const Sqlite = require("../models/sqlite");
-const sqlite = new Sqlite();
+const sqlite = require("../models/sqlite");
 
 router.post("/register", (req, res, next) => {
   let username = req.body.username;

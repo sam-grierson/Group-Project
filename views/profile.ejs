@@ -1,70 +1,84 @@
 <!DOCTYPE html>
 <html lang="eng">
-  <%-include("templates/head.ejs")-%>
-  <body>
-    <!--Nav bar-->
-    <%-include("templates/nav.ejs")-%>
-    <div class="w3-container w3-middle" style="margin-top: 55px;">
 
-      <div class="w3-card-4" style="width:70%; margin: 25px;">
-        <header class="w3-container w3-light-grey">
-          <%if (name){%>
-            <h3><%=name%></h3>
-          <%}%>
-        </header>
-        <div class="w3-container">
-          <p>Profile detail</p>
-          <hr>
-            <form action="/profile/update-profile" method="POST">
-              <p>Username: <input id="user" type="text" value="<%=userDetails.username%>" disabled name="username"></p>
-              <p>Email: <input id="email" type="text" value="<%=userDetails.email%>" disabled name="email"></p>
-              <p>Password: <input id="pass" type="password" value="<%=userDetails.password%>" disabled name="password"></p>
-            <br>
-            <%if (detailUpdateError) {%>
-              <p style="color:red"><%=detailUpdateError%></p>
-            <%}%>
-            <a class="w3-button w3-block w3-dark-grey" onclick="editProfile()" id="editProfile">edit</a>
-            <button class="w3-button w3-block w3-green" type="submit" style="display:none" id="saveProfile">save changes</button>
-            <a class="w3-button w3-block w3-red" style="display:none" id="cancelProfile" onclick="cancelProfile()">cancel</a>
-            </form>
-        </div>
+<!-- Head -->
+<%-include("templates/head.ejs")-%>
+
+<body>
+
+  <!--Nav bar-->
+  <%-include("templates/nav.ejs")-%>
+
+  <div class="w3-container w3-middle" style="margin-top: 55px;">
+
+    <div class="w3-card-4" style="width:70%; margin: 25px;">
+      <div class="w3-container w3-light-grey">
+        <% if (name){ %>
+        <h3><%=name%></h3>
+        <% } %>
       </div>
-      <div class="w3-card-4" style="width:70%; margin: 25px;">
-        <div class="w3-container">
-          <p>Payment Details</p>
-          <hr>
-            <form action="/profile/update-payment" method="POST">
-              <p>Name: <input id="name" type="text" value="<%-userPaymentDetails.name%>" name="name" disabled></p>
-              <p>Phone Number: <input id="phoneNo" type="text" value="<%-userPaymentDetails.phoneNo%>" name="phoneNo" disabled></p>
-              <p>Address: <input id="address" type="text" value="<%-userPaymentDetails.address%>" name="address" disabled></p>
-              <p>Credit card holder: <input id="cardName" type="text" value="<%-userPaymentDetails.cardName%>" name="cardName" disabled></p>
-              <p>Card number: <input id="cardNo" type="text" value="<%-userPaymentDetails.cardNo%>" name="cardNo" disabled></p>
-              <p>Card expiration: <input id="expiration" type="text" value="<%-userPaymentDetails.expiry%>" name="expiration" disabled></p>
-              <p>CVC: <input id="cvc" type="text" value="<%-userPaymentDetails.cvc%>" name="cvc" disabled></p>
-            <br>
-            <%if (paymentUpdateError) {%>
-              <p style="color:red"><%=paymentUpdateError%></p>
-            <%}%>
-            <a class="w3-button w3-block w3-dark-grey" onclick="editPayment()" id="editPayment">edit</a>
-            <button class="w3-button w3-block w3-green" type="submit" style="display:none" id="savePayment">save changes</button>
-            <a class="w3-button w3-block w3-red" style="display:none" id="cancelPayment" onclick="cancelPayment()">cancel</a>
-            </form>
-        </div>
-      </div>
-      <div class="w3-card-4" style="width:70%; margin: 25px;">
-        <div class="w3-container">
-          <p>Orders history</p>
-          <hr>
-          <%for(var i = 0; i < orderHistory.length; i++) {%>
-            <p>Cost: <%=orderHistory[i].Price%>/item</p>
-            <p>Product name: <%=orderHistory[i].title%></p>
-            <p>Quantity: <%=orderHistory[i].productQty%></p>
-            <hr>
-          <%}%>
-        </div>
+      <div class="w3-container">
+        <p>Profile detail</p>
+        <hr>
+        <form action="/profile/update-profile" method="POST">
+          <p>Username: <input id="user" type="text" value="<%=userDetails.username%>" disabled name="username"></p>
+          <p>Email: <input id="email" type="text" value="<%=userDetails.email%>" disabled name="email"></p>
+          <p>Password: <input id="pass" type="password" value="<%=userDetails.password%>" disabled name="password"></p>
+          <br>
+          <% if (detailUpdateError) { %>
+          <p style="color:red"><%=detailUpdateError%></p>
+          <% } %>
+          <a class="w3-button w3-block w3-dark-grey" onclick="editProfile()" id="editProfile">edit</a>
+          <button class="w3-button w3-block w3-green" type="submit" style="display:none" id="saveProfile">save changes</button>
+          <a class="w3-button w3-block w3-red" style="display:none" id="cancelProfile" onclick="cancelProfile()">cancel</a>
+        </form>
       </div>
     </div>
-  </body>
-  <%-include("templates/footer.ejs")-%>
-  <script src="/js/scripts.js"></script>
+
+    <div class="w3-card-4" style="width:70%; margin: 25px;">
+      <div class="w3-container">
+        <p>Payment Details</p>
+        <hr>
+        <form action="/profile/update-payment" method="POST">
+          <p>Name: <input id="name" type="text" value="<%-userPaymentDetails.name%>" name="name" disabled></p>
+          <p>Phone Number: <input id="phoneNo" type="text" value="<%-userPaymentDetails.phoneNo%>" name="phoneNo" disabled></p>
+          <p>Address: <input id="address" type="text" value="<%-userPaymentDetails.address%>" name="address" disabled></p>
+          <p>Credit card holder: <input id="cardName" type="text" value="<%-userPaymentDetails.cardName%>" name="cardName" disabled></p>
+          <p>Card number: <input id="cardNo" type="text" value="<%-userPaymentDetails.cardNo%>" name="cardNo" disabled></p>
+          <p>Card expiration: <input id="expiration" type="text" value="<%-userPaymentDetails.expiry%>" name="expiration" disabled></p>
+          <p>CVC: <input id="cvc" type="text" value="<%-userPaymentDetails.cvc%>" name="cvc" disabled></p>
+          <br>
+          <% if (paymentUpdateError) { %>
+          <p style="color:red"><%=paymentUpdateError%></p>
+          <% } %>
+          <a class="w3-button w3-block w3-dark-grey" onclick="editPayment()" id="editPayment">edit</a>
+          <button class="w3-button w3-block w3-green" type="submit" style="display:none" id="savePayment">save changes</button>
+          <a class="w3-button w3-block w3-red" style="display:none" id="cancelPayment" onclick="cancelPayment()">cancel</a>
+        </form>
+      </div>
+    </div>
+
+    <div class="w3-card-4" style="width:70%; margin: 25px;">
+      <div class="w3-container">
+        <p>Orders history</p>
+        <hr>
+        <% for(var i = 0; i < orderHistory.length; i++) { %>
+        <p>Cost: <%=orderHistory[i].Price%>/item</p>
+        <p>Product name: <%=orderHistory[i].title%></p>
+        <p>Quantity: <%=orderHistory[i].productQty%></p>
+        <hr>
+        <% } %>
+      </div>
+    </div>
+    
+  </div>
+  
+<!-- Footer -->
+<%-include("templates/footer.ejs")-%>
+
+</body>
+
+<!-- Scripts -->
+<script src="/js/scripts.js"></script>
+
 </html>
