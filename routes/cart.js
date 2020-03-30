@@ -1,26 +1,22 @@
-const sqlite3 = require("sqlite3").verbose();
 const express = require("express");
 const router = express.Router();
 
+const utils = require("../lib/utils")
 const Cart = require("../models/cart");
 
 router.get("/", (req, res) => {
   let session = req.session
-
-  function getUser(session) {
-    if (session.loggedin === true) {
-      return req.session.username;
-    } else {
-      return false;
-    }
-  }
 
   if (!req.session.cart) {
     return res.render("cart", {
       cartCount: false,
       products: false,
       total: 0,
-      name: getUser(session)
+      name: utils.getUser(session),
+      loginError: null,
+      registerError: null,
+      registerSuccess: null,
+      admin: req.session.isadmin
     });
   }
 
@@ -29,7 +25,11 @@ router.get("/", (req, res) => {
     cartCount: cart.totalQty,
     products: cart.generateArray(),
     total: cart.totalPrice,
-    name: getUser(session)
+    name: utils.getUser(session),
+    loginError: null,
+    registerError: null,
+    registerSuccess: null,
+    admin: req.session.isadmin
   });
 });
 

@@ -1,82 +1,69 @@
-const sqlite3 = require("sqlite3").verbose();
 const express = require("express");
 const router = express.Router();
-const Cart = require("../models/cart")
+const nodemailer = require("nodemailer");
+
+const Cart = require("../models/cart");
+const Sqlite = require("../models/sqlite");
+const utils = require("../lib/utils")
+const sqlite = new Sqlite();
 
 router.get("/", (req, res) => {
-  let db = new sqlite3.Database("db/database.db"); // path could become an issue when run on windows?
-  let sql = `SELECT * FROM products`;
   let session = req.session
   let cart = new Cart(req.session.cart ? req.session.cart : {});
 
-  function getUser(session) {
-    if (session.loggedin === true) {
-      return req.session.username;
-    } else {
-      return false;
-    }
-  }
+  sqlite.getProducts((err, products) => {
+      res.render("index", {
+      cartCount: cart.totalQty,
+      name: utils.getUser(session),
+      products: products,
+      loginError: null,
+      registerError:null,
+      registerSuccess: null,
+      admin: req.session.isadmin,
+      searched: null
+    });
+  });
+});
 
-  db.all(sql, (err, products) => {
+router.post("/search", (req, res) => {
+  let criteria = req.body.productname
+  let session = req.session
+  let cart = new Cart(req.session.cart ? req.session.cart : {});
+
+  sqlite.searchProduct(criteria, (err, result) => {
     if (err) {
       console.error(err);
-    } else {
-      res.render("index", {
+      res.render("index",{
         cartCount: cart.totalQty,
-        name: getUser(session),
-        products: products
+        name: utils.getUser(session),
+        products: [],
+        loginError: null,
+        registerError: null,
+        registerSuccess: null,
+        admin: req.session.isadmin,
+        searched: criteria
+      });
+    } else {
+      res.render("index",{
+        cartCount: cart.totalQty,
+        name: utils.getUser(session),
+        products: result,
+        loginError: null,
+        registerError: null,
+        registerSuccess: null,
+        admin: req.session.isadmin,
+        searched: criteria
       });
     }
   });
-
-  db.close((err) => {
-    if (err) {
-      return console.error(err.message)
-    }
-  })
 });
-
-router.post("/search", (req, res) => { // function  for searching database
-  let db = new sqlite3.Database("db/database.db");
-  let productId = req.body.productname
-  let sql = `SELECT * from products WHERE title = '${productId}'`; // this makes the query vounerable to sql injections
-  let session = req.session
-  let cart = new Cart(req.session.cart ? req.session.cart : {});
-  console.log(sql)
-
- function getUser(session) { //needed for compatibility with render index
-   if (session.loggedin === true) {
-     return req.session.username;
-   } else {
-     return false;
-   }
- }
-
- db.all(sql , (err,result) => {
-   if (err) {
-     console.error(err);
-     return res.redirect("/");
-   }else{
-     res.render("index",{ // unable to get the additional tables to show up
-       cartCount: cart.totalQty,
-       name: getUser(session),
-       products: result
-     });
-   }
- });
-});
-
 
 router.get("/add-cart/:id", (req, res) => {
-  let db = new sqlite3.Database("db/database.db");
-  let sql = `SELECT * FROM products WHERE id = ?`;
   let productId = req.params.id;
 
-
-  db.get(sql, [productId], (err, product) => {
+  sqlite.addToCart(productId, (err, product) => {
     if (err) {
-      console.error(err);
-      return res.redirect("/");
+      res.redirect("/");
     } else {
       let cart = new Cart(req.session.cart ? req.session.cart : {});
       cart.add(product, product.id);
@@ -84,6 +71,114 @@ router.get("/add-cart/:id", (req, res) => {
       res.redirect("/");
     }
   });
+});
+
+router.get("/removeItem/:id", (req, res) => {
+  let productId = req.params.id;
+
+  sqlite.removeItem(productId, (err, product) => {
+    if (err) {
+      res.redirect("/");
+    } else {
+      res.redirect("/");
+    }
+  });
+});
+
+router.get("/addItem", (req, res) => {
+  let session = req.session
+  let cart = new Cart(req.session.cart ? req.session.cart : {});
+
+  res.render('addItem', {
+    cartCount: cart.totalQty,
+    name: utils.getUser(session),
+    loginError: null,
+    registerError: null,
+    registerSuccess: null,
+    admin: req.session.isadmin,
+    itemAdded: false
+  });
+});
+
+router.post("/addItem", (req, res) => {
+  let session = req.session
+  let cart = new Cart(req.session.cart ? req.session.cart : {});
+
+  let title = req.body.title;
+  let price = req.body.price;
+  let image = 'assets/' + req.body.image + '.jpg';
+  let stock = req.body.stock;
+
+  sqlite.addItem(title,price,image,stock, (err) => {
+
+    res.render('addItem', {
+      cartCount: cart.totalQty,
+      name: utils.getUser(session),
+      loginError: null,
+      registerError: null,
+      registerSuccess: null,
+      admin: req.session.isadmin,
+      itemAdded: true
+    });
+  });
+});
+
+router.post('/send', function(req, res) {
+  const output = `
+  You have a new message From
+
+  Name: ${req.body.Name}
+  Email: ${req.body.Email}
+  Subject: ${req.body.Subject}
+
+  Message: ${req.body.Message}
+  `;
+
+  async function main() {
+    let testAccount = await nodemailer.createTestAccount();
+
+    let transporter = nodemailer.createTransport({
+      host: "smtp.ethereal.email",
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: testAccount.user, // generated ethereal user
+        pass: testAccount.pass // generated ethereal password
+      }
+    });
+
+    let info = await transporter.sendMail({
+      from: '"Fred Foo 👻" <foo@example.com>', // sender address
+      to: "bar@example.com, baz@example.com", // list of receivers
+      subject: "Issue", // Subject line
+      text: output
+    });
+
+    console.log("Message sent: %s", info.messageId);
+
+    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+
+    /*let mailOptions = {
+      from: 'grouprojectpen@gmail.com',
+      to: 'grouprojectpen@gmail.com',
+      subject: 'Issue',
+      text: output
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });*/
+  }
+
+  main().catch(console.error);
+
+
+
+  res.redirect('/');
 });
 
 module.exports = router;
