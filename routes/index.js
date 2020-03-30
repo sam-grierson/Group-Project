@@ -3,9 +3,9 @@ const router = express.Router();
 const nodemailer = require("nodemailer");
 
 const Cart = require("../models/cart");
-const Sqlite = require("../models/sqlite");
+const sqlite = require("../models/sqlite");
 const utils = require("../lib/utils")
-const sqlite = new Sqlite();
+
 
 router.get("/", (req, res) => {
   let session = req.session
