@@ -1,34 +1,41 @@
 <!DOCTYPE html>
 <html lang="eng">
-  <%-include("templates/head.ejs")-%>
-  <body>
-    <!--Nav bar-->
-    <%-include("templates/nav.ejs")-%>
-    <!--Page Content-->
-    <div class="w3-main" style="margin-top: 85px">
-      <p style="margin-left:25px"><%if (searched) {%> Result for: <%-searched%> <% } else { %>Total Products: <%=products.length%> <%}%></p>
-      <!--Product grid-->
-      <div class="w3-row w3">
-        <!--Product-->
-        <%for(var i = 0; i < products.length; i++) {%>
-        <div class="w3-col l3 s6" style="width:307px;height: 307px;">
-          <div class="w3-container">
-            <div class="w3-display-container">
-              <img style="width:250px;height: 250px;" src=../<%=products[i].image%>>
+
+<!-- Head -->
+<%-include("templates/head.ejs")-%>
+  
+<body>
+
+  <!--Nav bar-->
+  <%-include("templates/nav.ejs")-%>
+
+  <div class="w3-main" style="margin-top: 85px">
+    <p style="margin-left:25px"><% if (searched) { %> Result for: <%-searched%> <% } else { %>Total Products: <%=products.length%> <% } %></p>
+
+    <div class="w3-row w3">
+      <% for(var i = 0; i < products.length; i++) { %>
+      <div class="w3-col l3 s6" style="width:307px;height: 307px;">
+        <div class="w3-container">
+          <div class="w3-display-container">
+            <img style="width:250px;height: 250px;" src=../<%=products[i].image%>>
               <div class="w3-display-middle w3-display-hover">
-                <%if (admin) {%>
-                  <a class="w3-button w3-red" href="/removeItem/<%=products[i].id%>">Remove item <i class="fa fa-trash"></i></a>
-                <%} else {%>
-                  <a class="w3-button w3-black" href="/add-cart/<%=products[i].id%>">Add to cart <i class="fa fa-shopping-cart"></i></a>
-                <%}%>
+                <% if (admin) { %>
+                <a class="w3-button w3-red" href="/removeItem/<%=products[i].id%>">Remove item <i class="fa fa-trash"></i></a>
+                <% } else { %>
+                <a class="w3-button w3-black" href="/add-cart/<%=products[i].id%>">Add to cart <i class="fa fa-shopping-cart"></i></a>
+                <% } %>
               </div>
-            </div>
-            <p><%=products[i].title%><br><b>£<%=products[i].Price%></b></p>
           </div>
+          <p><%=products[i].title%><br><b>£<%=products[i].Price%></b></p>
         </div>
-        <%}%>
       </div>
+      <% } %>
     </div>
-  </body>
-  <%-include("templates/footer.ejs")-%>
+
+  </div>
+  
+<!-- Footer -->
+<%-include("templates/footer.ejs")-%>  
+
+</body>
 </html>
