@@ -45,8 +45,28 @@ function cancelPayment () {
 };
 
 function editCheckout () {
-  let inputs = document.getElementsByClassName('input-box'); 
-  for (var i=0; i < inputs.length; i++) { 
+  let inputs = document.getElementsByClassName('input-box');
+  for (var i=0; i < inputs.length; i++) {
     inputs[i].disabled = false;
   };
+};
+
+function add(id) {
+  $.ajax({
+    type: 'GET',
+    url: '/add-cart/' + id
+  })
+  .done(function(data) {
+    window.location.reload();
+  });
+};
+
+function remove(id) {
+  $.ajax({
+    type: 'GET',
+    url: '/removeItem/' + id
+  })
+  .done(function(data) {
+    window.location.reload();
+  });
 };
