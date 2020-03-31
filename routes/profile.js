@@ -7,15 +7,15 @@ const Cart = require("../models/cart");
 const sqlite = require("../models/sqlite");
 
 router.get("/", (req, res) => {
-  let userID = req.session.userID;
-  let cart = new Cart(req.session.cart ? req.session.cart : {});
+  let token = insecurity.verify(req.cookies.token);
+  let cart = new Cart(req.cookies.cart ? req.cookies.cart : {});
   
-  sqlite.getUserDetails(userID, (err, userDetails) => {
-    sqlite.getUserPaymentDetails(userID, (err, userPaymentDetails) => {
-        sqlite.getOrderHistory(userID, (err, orders) => {
+  sqlite.getUserDetails(token.userID, (err, userDetails) => {
+    sqlite.getUserPaymentDetails(token.userID, (err, userPaymentDetails) => {
+        sqlite.getOrderHistory(token.userID, (err, orders) => {
           res.render("profile", {
             cartCount: cart.totalQty,
-            name: req.session.username,
+            name: token.username,
             userDetails: userDetails,
             detailUpdateError: null,
             userPaymentDetails: userPaymentDetails,
@@ -23,7 +23,7 @@ router.get("/", (req, res) => {
             loginError: null,
             registerError: null,
             registerSuccess: null,
-            admin: req.session.isadmin,
+            admin: token.isAdmin,
             orderHistory: orders
           });
         });
@@ -32,8 +32,9 @@ router.get("/", (req, res) => {
   });
   
 router.post("/update-profile", (req, res) => {
-  let cart = new Cart(req.session.cart ? req.session.cart : {});
-  let userID = req.session.userID;
+  let cart = new Cart(req.cookies.cart ? req.cookies.cart : {});
+  let token = insecurity.verify(req.cookies.token);
+  
   let username = req.body.username;
   let email = req.body.email;
   let password = req.body.password;
@@ -48,24 +49,24 @@ router.post("/update-profile", (req, res) => {
   } else if (validate.isEmail(email) === false) {
     error = "Invalid email address";
   } else {
-    sqlite.getUserDetails(userID, (getUserDetailsError, userDetails) => {
+    sqlite.getUserDetails(token.userID, (getUserDetailsError, userDetails) => {
       if (password === userDetails.password) {
       } else {
         password = insecurity.hash(password);     
       }
-      sqlite.updateProfile(username, email, password, userID, (err, result) => {
+      sqlite.updateProfile(username, email, password, token.userID, (err, result) => {
       if (err) {
           if (err.errno == 19) {
             error = "Username is already taken";
           } else {
             error = err;          
           }
-          sqlite.getUserDetails(userID, (getUserDetailsError, userDetails) => {
-            sqlite.getUserPaymentDetails(userID, (getPaymentDetailsError, userPaymentDetails) => {
-              sqlite.getOrderHistory(userID, (getOrderHistoryError, orders) => {
+          sqlite.getUserDetails(token.userID, (getUserDetailsError, userDetails) => {
+            sqlite.getUserPaymentDetails(token.userID, (getPaymentDetailsError, userPaymentDetails) => {
+              sqlite.getOrderHistory(token.userID, (getOrderHistoryError, orders) => {
                 res.render("profile", {
                   cartCount: cart.totalQty,
-                  name: req.session.username,
+                  name: token.username,
                   userDetails: userDetails,
                   detailUpdateError: error,
                   userPaymentDetails: userPaymentDetails,
@@ -73,7 +74,7 @@ router.post("/update-profile", (req, res) => {
                   loginError: null,
                   registerError: null,
                   registerSuccess: null,
-                  admin: req.session.isadmin,
+                  admin: token.isAdmin,
                   orderHistory: orders
                 });
               });
@@ -86,12 +87,12 @@ router.post("/update-profile", (req, res) => {
     });
   }
   if (error !== null) {
-    sqlite.getUserDetails(userID, (getUserDetailsError, userDetails) => {
-      sqlite.getUserPaymentDetails(userID, (getPaymentDetailsError, userPaymentDetails) => {
-        sqlite.getOrderHistory(userID, (getOrderHistoryError, orders) => {
+    sqlite.getUserDetails(token.userID, (getUserDetailsError, userDetails) => {
+      sqlite.getUserPaymentDetails(token.userID, (getPaymentDetailsError, userPaymentDetails) => {
+        sqlite.getOrderHistory(token.userID, (getOrderHistoryError, orders) => {
           res.render("profile", {
             cartCount: cart.totalQty,
-            name: req.session.username,
+            name: token.username,
             userDetails: userDetails,
             detailUpdateError: error,
             userPaymentDetails: userPaymentDetails,
@@ -99,7 +100,7 @@ router.post("/update-profile", (req, res) => {
             loginError: null,
             registerError: null,
             registerSuccess: null,
-            admin: req.session.isadmin,
+            admin: token.isAdmin,
             orderHistory: orders
           });
         });
@@ -109,8 +110,9 @@ router.post("/update-profile", (req, res) => {
 });
 
 router.post("/update-payment", (req, res) => {
-  let cart = new Cart(req.session.cart ? req.session.cart : {});
-  let userID = req.session.userID;
+  let cart = new Cart(req.cookies.cart ? req.cookies.cart : {});
+  let token = insecurity.verify(req.cookies.token);
+
   let name = req.body.name;
   let phoneNo = req.body.phoneNo;
   let address = req.body.address;
@@ -137,7 +139,7 @@ router.post("/update-payment", (req, res) => {
   } 
 
   if (error === null) {
-    sqlite.updatePaymentDetails(name, phoneNo, address, cardName, cardNo, expiration, cvc, userID, (err, result) => {
+    sqlite.updatePaymentDetails(name, phoneNo, address, cardName, cardNo, expiration, cvc, token.userID, (err, result) => {
       if (err) {
         return error = err;
       } else {
@@ -145,12 +147,12 @@ router.post("/update-payment", (req, res) => {
       }
     });
   } else {
-    sqlite.getUserDetails(userID, (userDetailsError, userDetails) => {
-      sqlite.getUserPaymentDetails(userID, (userPaymentDetialsError, userPaymentDetails) => {
-        sqlite.getOrderHistory(userID, (getOrderHistoryError, orders) => {
+    sqlite.getUserDetails(token.userID, (userDetailsError, userDetails) => {
+      sqlite.getUserPaymentDetails(token.userID, (userPaymentDetialsError, userPaymentDetails) => {
+        sqlite.getOrderHistory(token.userID, (getOrderHistoryError, orders) => {
           res.render("profile", {
             cartCount: cart.totalQty,
-            name: req.session.username,
+            name: token.username,
             userDetails: userDetails,
             detailUpdateError: null,
             userPaymentDetails: userPaymentDetails,
@@ -158,7 +160,7 @@ router.post("/update-payment", (req, res) => {
             loginError: null,
             registerError: null,
             registerSuccess: null,
-            admin: req.session.isadmin,
+            admin: token.isAdmin,
             orderHistory: orders
           });
         });

@@ -3,14 +3,16 @@ const router = express.Router();
 
 const Cart = require("../models/cart");
 const sqlite = require("../models/sqlite");
-const validate = require("../lib/validate")
+const validate = require("../lib/validate");
+const insecurity = require("../lib/insecurity");
+const utils = require("../lib/utils");
 
 router.get("/", (req, res) => {
-  let cart = new Cart(req.session.cart);
-  let session = req.session;
+  let cart = new Cart(req.cookies.cart);
 
-  if (session.loggedin == true) {
-    sqlite.getUserPaymentDetails(session.userID,(err, userPaymentDetails) => {
+  if (req.cookies.token) {
+    let token = insecurity.verify(req.cookies.token);
+    sqlite.getUserPaymentDetails(token.userID, (getUserPaymentDetailsError, userPaymentDetails) => {
       res.render("checkout", {
         email: null,
         userPaymentDetails: userPaymentDetails,
@@ -18,14 +20,14 @@ router.get("/", (req, res) => {
         guestCheckoutError: null,
         cartCount: cart.totalQty,
         cartEmpty: cart.totalQty,
-        loggedIn: req.session.loggedin,
+        loggedIn: true,
         total: cart.totalPrice,
         paymentSub: null,
-        name: session.username,
+        name: token.username,
         loginError: null,
         registerError: null,
         registerSuccess: null,
-        admin: req.session.isadmin
+        admin: token.isAdmin
       });
     });
   } else {
@@ -36,21 +38,22 @@ router.get("/", (req, res) => {
       guestCheckoutError: null,
       cartCount: cart.totalQty,
       cartEmpty: cart.totalQty,
-      loggedIn: req.session.loggedin,
+      loggedIn: null,
       total: cart.totalPrice,
       paymentSub: null,
-      name: false,
+      name: null,
       loginError: null,
       registerError: null,
       registerSuccess: null,
-      admin: req.session.isadmin
+      admin: utils.getAdmin(req.cookies)
     });
   }
 });
 
 // logged in user checkout payments
 router.post("/checkout-logged-in", (req, res) => {
-  let cart = new Cart(req.session.cart);
+  let cart = new Cart(req.cookies.cart);
+  let token = insecurity.verify(req.cookies.token);
 
   let name = req.body.userName;
   let phoneNo = req.body.userPhoneno;
@@ -60,14 +63,6 @@ router.post("/checkout-logged-in", (req, res) => {
   let expiration = req.body.userExpiration;
   let cvc = req.body.userCvc;
   let error = null;
-
-  function checkError(error) {
-    if (error === null) {
-      return true;
-    } else {
-      return false;
-    }
-  };
 
   if (name === "") {
     name = null;
@@ -86,20 +81,20 @@ router.post("/checkout-logged-in", (req, res) => {
   } else if (name && phoneNo && address && cardName && cardNo && expiration && cvc) {
     products = cart.generateArray();
     for (let i = 0; i < products.length; i++) {
-      sqlite.insertOrder(name, phoneNo, address, cardName, cardNo, expiration, cart.totalPrice, products[i].item.id, products[i].qty, req.session.userID, (err, result) => {
+      sqlite.insertOrder(name, phoneNo, address, cardName, cardNo, expiration, cart.totalPrice, products[i].item.id, products[i].qty, token.userID, (err, result) => {
         if (err) {
           error = err;
         } else {
           cart.clearCart();
-          req.session.cart = cart;
+          res.cookie("cart", cart, { expiresIn: 3600 * 5 });
         };
       });
     }
   } else {
     error = "Please fill out all the fields in the payment details form"
   }
-  sqlite.getUserDetails(req.session.userID, (getUserDetailsError, userDetails) => {
-    sqlite.getUserPaymentDetails(req.session.userID,(getUserPaymentDetailsError, userPaymentDetails) => {
+  sqlite.getUserDetails(token.userID, (getUserDetailsError, userDetails) => {
+    sqlite.getUserPaymentDetails(token.userID,(getUserPaymentDetailsError, userPaymentDetails) => {
       res.render("checkout", {
         email: userDetails.email,
         userPaymentDetails: userPaymentDetails,
@@ -107,14 +102,14 @@ router.post("/checkout-logged-in", (req, res) => {
         guestCheckoutError: null,
         cartCount: cart.totalQty,
         cartEmpty: cart.totalQty,
-        loggedIn: req.session.loggedin,
+        loggedIn: true,
         total: cart.totalPrice,
-        paymentSub: checkError(error),
-        name: req.session.username,
+        paymentSub: utils.checkError(error),
+        name: token.username,
         loginError: null,
         registerError: null,
         registerSuccess: null,
-        admin: req.session.isadmin
+        admin: token.isAdmin
       });
     });
   });
@@ -122,32 +117,24 @@ router.post("/checkout-logged-in", (req, res) => {
 
 // Guest checkout payments
 router.post("/checkout-guest", (req, res) => {
-  let cart = new Cart(req.session.cart);
+  let cart = new Cart(req.cookies.cart);
 
   let firstName = req.body.firstname;
   let surname = req.body.secondname;
   let email = req.body.email;
   let phoneNo = req.body.phoneno;
   let address = req.body.address;
-  let cardName = req.body.firstname;
-  let cardNo = req.body.firstname;
+  let cardName = req.body.cardname;
+  let cardNo = req.body.cardno;
   let expMon = req.body.expmon;
   let expYr = req.body.expyr;
   let cvc = req.body.cvc;
   let error = null;
 
-  function checkError(error) {
-    if (error === null) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
   if (firstName === "") {
     firstName = null;
   } else if (surname === "") {
-      surname = null;
+    surname = null;
   } else if (validate.isPhoneNumber(phoneNo) === false) {
     error = "Invalid phone number";
   } else if (validate.isEmail(email) === false) {
@@ -158,13 +145,13 @@ router.post("/checkout-guest", (req, res) => {
     cardName = null;
   } else if (validate.isVisaCard(cardNo) === false && validate.isMasterCard(cardNo) === false) {
     error = "Invalid Payment information: This site only accepts Visa or Master card";
-  } else if (validate.isMonth(expMon) === false && validate.isYear(expYr) === false) {
+  } else if (validate.isExpiration(expMon + "/" + expYr) === false ) {
     error = "Invalid Payment information: Invalid expiration";
   } else if (validate.isCvc(cvc) === false) {
     error = "Invalid Payment information: Invalid CVC";
-  } else if (name && phoneNo && address && cardName && cardNo && expiration && cvc) {    
+  } else if (firstName && surname && email && phoneNo && address && cardName && cardNo && expMon && expYr && cvc) {    
     cart.clearCart();
-    req.session.cart = cart;
+    res.cookie("cart", cart, { expiresIn: 3600 * 5 });
   } else {
     error = "Please fill out all the fields in the payment details form.";
   }
@@ -175,14 +162,14 @@ router.post("/checkout-guest", (req, res) => {
     guestCheckoutError: error,
     cartCount: cart.totalQty,
     cartEmpty: cart.totalQty,
-    loggedIn: req.session.loggedin,
+    loggedIn: null,
     total: cart.totalPrice,
-    paymentSub: checkError(error),
+    paymentSub: utils.checkError(error),
     name: null,
     loginError: null,
     registerError: null,
     registerSuccess: null,
-    admin: req.session.isadmin
+    admin: utils.getAdmin(req.cookies)
   });
 });
 
