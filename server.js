@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const session = require('express-session')
+const cookieParser = require("cookie-parser");
 
 const dbPath = path.resolve(__dirname,'db/database.db');
 const sqlite3 = require('sqlite3').verbose();
@@ -29,17 +29,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-app.use(session({
-  secret: 'secret',
-  resave: true,
-  saveUninitialized: true,
-  cookie: { maxAge: 180 * 60 * 1000}
-}));
-
-app.use((req, res, next) => {
-  res.locals.session = req.session;
-  next();
-});
+app.use(cookieParser());
 
 app.use("/", indexRoute);
 app.use("/users", usersRoute);
