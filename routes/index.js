@@ -68,7 +68,7 @@ router.get("/add-cart/:id", (req, res) => {
       let cart = new Cart(req.session.cart ? req.session.cart : {});
       cart.add(product, product.id);
       req.session.cart = cart;
-      res.redirect("/");
+      res.send(product);
     }
   });
 });
@@ -80,7 +80,7 @@ router.get("/removeItem/:id", (req, res) => {
     if (err) {
       res.redirect("/");
     } else {
-      res.redirect("/");
+      res.send(product);
     }
   });
 });
