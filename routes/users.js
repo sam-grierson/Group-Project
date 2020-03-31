@@ -12,17 +12,9 @@ router.post("/register", (req, res, next) => {
   let email = req.body.email;
   let password = req.body.password;
   let passwordTwo = req.body.passwordTwo;
-  let session = req.session;
   let cart = new Cart(req.session.cart ? req.session.cart : {});
 
   let error = null;
-  function checkError(error) {
-    if (error === null) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   if (username && email && password && passwordTwo) {
     if (password !== passwordTwo) {
@@ -41,12 +33,12 @@ router.post("/register", (req, res, next) => {
         sqlite.getProducts((productsErr, products) => {
           res.render("index", {
             cartCount: cart.totalQty,
-            name: utils.getUser(session),
+            name: utils.getUser(req.cookies),
             products: products,
             loginError: null,
             registerError: error,
-            registerSuccess: checkError(error),
-            admin: req.session.isadmin,
+            registerSuccess: utils.checkError(error),
+            admin: utils.getAdmin(req.cookies),
             searched: null
           });
         });
@@ -56,12 +48,12 @@ router.post("/register", (req, res, next) => {
       sqlite.getProducts((productsErr, products) => {
         res.render("index", {
           cartCount: cart.totalQty,
-          name: utils.getUser(session),
+          name: utils.getUser(req.cookies),
           products: products,
           loginError: null,
           registerError: error,
-          registerSuccess: checkError(error),
-          admin: req.session.isadmin,
+          registerSuccess: utils.checkError(error),
+          admin: utils.getAdmin(req.cookies),
           searched: null
         });
       });
@@ -72,8 +64,7 @@ router.post("/register", (req, res, next) => {
 router.post("/login", (req, res) => {
   let username = req.body.username;
   let password = req.body.password;
-  let session = req.session
-  let cart = new Cart(req.session.cart ? req.session.cart : {});
+  let cart = new Cart(req.cookies.cart ? req.cookies.cart : {});
 
   if (username && password) {
     sqlite.loginUser(username, insecurity.hash(password), (err, row) => {
@@ -81,12 +72,12 @@ router.post("/login", (req, res) => {
         sqlite.getProducts((productErr, products) => {
           res.render("index", {
             cartCount: cart.totalQty,
-            name: utils.getUser(session),
+            name: utils.getUser(req.cookies),
             products: products,
             loginError: err,
             registerError: null,
             registerSuccess: null,
-            admin: req.session.isadmin,
+            admin: utils.getAdmin(req.cookies),
             searched: null
           });
         });
@@ -94,45 +85,32 @@ router.post("/login", (req, res) => {
         sqlite.getProducts((err, products) => {
           res.render("index", {
             cartCount: cart.totalQty,
-            name: utils.getUser(session),
+            name: utils.getUser(req.cookies),
             products: products,
             loginError: "Invalid username/password.",
             registerError: null,
             registerSuccess: null,
-            admin: req.session.isadmin,
+            admin: utils.getAdmin(req.cookies),
             searched: null
           });
         });
       } else if (row.username == "Admin") {
-        req.session.isadmin = true;
-        req.session.loggedin = true;
-        req.session.username = row.username;
-        req.session.userID = row.id;
+        token = insecurity.authorize({ userID: row.id, username: row.username, isAdmin: true });
+        res.cookie("token", token, {maxAge: 3600 * 5 });
         res.redirect("/");
       } else {
-        token = insecurity.authorize({ userID: row.id, username: row.username });
-        console.log(token);
-        req.session.isadmin = false;
-        req.session.loggedin = true;
-        req.session.username = row.username;
-        req.session.userID = row.id;
+        token = insecurity.authorize({ userID: row.id, username: row.username, isAdmin: false });
+        res.cookie("token", token, {maxAge: 3600 * 5 });
         res.redirect("/");
       }
     });
   }
 });
 
-// logout route
 router.get("/logout", (req, res) => {
-  if (req.session) {
-    // delete session object
-    req.session.destroy(function(err) {
-      if(err) {
-        return next(err);
-      } else {
-        res.redirect('/');
-      }
-    });
+  if (req.cookies) {
+    res.clearCookie("token");
+    res.redirect("/");
   }
 });
 
