@@ -9,7 +9,7 @@ const utils = require("../lib/utils")
 
 router.get("/", (req, res) => {
   let cart = new Cart(req.cookies.cart ? req.cookies.cart : {});
-  
+  console.log(req.cookies);
   sqlite.getProducts((err, products) => {
       res.render("index", {
       cartCount: cart.totalQty,
@@ -84,7 +84,7 @@ router.get("/removeItem/:id", (req, res) => {
 });
 
 router.get("/addItem", (req, res) => {
-  let cart = new Cart(req.cookie.cart ? req.cookie.cart : {});
+  let cart = new Cart(req.cookies.cart ? req.cookies.cart : {});
 
   res.render('addItem', {
     cartCount: cart.totalQty,
