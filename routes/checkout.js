@@ -51,7 +51,7 @@ router.get("/", (req, res) => {
 });
 
 // logged in user checkout payments
-router.post("/checkout-logged-in", (req, res) => {
+router.post("/checkout-logged-in", (req, res, next) => {
   let cart = new Cart(req.cookies.cart);
   let token = insecurity.verify(req.cookies.token);
 
@@ -84,12 +84,11 @@ router.post("/checkout-logged-in", (req, res) => {
       sqlite.insertOrder(name, phoneNo, address, cardName, cardNo, expiration, cart.totalPrice, products[i].item.id, products[i].qty, token.userID, (err, result) => {
         if (err) {
           error = err;
-        } else {
-          cart.clearCart();
-          res.cookie("cart", cart, { maxAge: 7200000 });
-        };
+        }
       });
     }
+    cart.clearCart();
+    res.cookie("cart", cart, { maxAge: 7200000 });
   } else {
     error = "Please fill out all the fields in the payment details form"
   }
