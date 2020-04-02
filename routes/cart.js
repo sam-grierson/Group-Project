@@ -37,7 +37,7 @@ router.get("/remove-cart/:id", (req, res) => {
   let cart = new Cart(req.cookies.cart ? req.cookies.cart : {});
 
   cart.removeItem(productId);
-  res.cookie("cart", cart, { expiresIn: 3600 * 5 });
+  res.cookie("cart", cart, { maxAge: 7200000 });
   res.redirect("/cart")
 });
 
@@ -45,7 +45,7 @@ router.get("/empty-cart", (req, res) => {
   let cart = new Cart(req.cookies.cart ? req.cookies.cart : {});
 
   cart.clearCart();
-  res.cookie("cart", cart, { expiresIn: 3600 * 5 });
+  res.cookie("cart", cart, { maxAge: 7200000 });
   res.redirect("/cart")
 });
 

@@ -86,7 +86,7 @@ router.post("/checkout-logged-in", (req, res) => {
           error = err;
         } else {
           cart.clearCart();
-          res.cookie("cart", cart, { expiresIn: 3600 * 5 });
+          res.cookie("cart", cart, { maxAge: 7200000 });
         };
       });
     }
@@ -151,7 +151,7 @@ router.post("/checkout-guest", (req, res) => {
     error = "Invalid Payment information: Invalid CVC";
   } else if (firstName && surname && email && phoneNo && address && cardName && cardNo && expMon && expYr && cvc) {    
     cart.clearCart();
-    res.cookie("cart", cart, { expiresIn: 3600 * 5 });
+    res.cookie("cart", cart, { maxAge: 7200000 });
   } else {
     error = "Please fill out all the fields in the payment details form.";
   }

@@ -96,11 +96,11 @@ router.post("/login", (req, res) => {
         });
       } else if (row.username == "Admin") {
         token = insecurity.authorize({ userID: row.id, username: row.username, isAdmin: true });
-        res.cookie("token", token, {maxAge: 3600 * 5 });
+        res.cookie("token", token, { maxAge: 7200000 });
         res.redirect("/");
       } else {
         token = insecurity.authorize({ userID: row.id, username: row.username, isAdmin: false });
-        res.cookie("token", token, {maxAge: 3600 * 5 });
+        res.cookie("token", token, { maxAge: 7200000 });
         res.redirect("/");
       }
     });
