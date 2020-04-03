@@ -20,9 +20,9 @@
             <img style="width:250px;height: 250px;" src=../<%=products[i].image%>>
               <div class="w3-display-middle w3-display-hover">
                 <% if (admin) { %>
-                <a class="w3-button w3-red" onclick="remove(<%=products[i].id%>)">Remove item <i class="fa fa-trash"></i></a>
+                <a class="w3-button w3-red" onclick="removeProduct(<%=products[i].id%>)">Remove item <i class="fa fa-trash"></i></a>
                 <% } else { %>
-                <a class="w3-button w3-black" onclick="add(<%=products[i].id%>)">Add to cart <i class="fa fa-shopping-cart"></i></a>
+                <a class="w3-button w3-black" onclick="addToCart(<%=products[i].id%>)">Add to cart <i class="fa fa-shopping-cart"></i></a>
                 <% } %>
               </div>
           </div>
