@@ -51,7 +51,7 @@ function editCheckout () {
   };
 };
 
-function add(id) {
+function addToCart(id) {
   $.ajax({
     type: 'GET',
     url: '/add-cart/' + id
@@ -61,10 +61,20 @@ function add(id) {
   });
 };
 
-function remove(id) {
+function removeProduct(id) {
   $.ajax({
     type: 'GET',
     url: '/removeItem/' + id
+  })
+  .done(function(data) {
+    window.location.reload();
+  });
+};
+
+function removefromCart(id) {
+  $.ajax({
+    type: 'GET',
+    url: '/cart/remove-cart/' + id
   })
   .done(function(data) {
     window.location.reload();

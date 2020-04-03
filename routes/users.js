@@ -12,7 +12,7 @@ router.post("/register", (req, res, next) => {
   let email = req.body.email;
   let password = req.body.password;
   let passwordTwo = req.body.passwordTwo;
-  let cart = new Cart(req.session.cart ? req.session.cart : {});
+  let cart = new Cart(req.cookies.cart ? req.cookies.cart : {});
 
   let error = null;
 
