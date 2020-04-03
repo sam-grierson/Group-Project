@@ -176,4 +176,20 @@ router.post('/send', function(req, res) {
   res.redirect('/');
 });
 
+router.get("/about-us", (req, res) => {
+  let cart = new Cart(req.cookies.cart ? req.cookies.cart : {});
+  console.log(req.cookies);
+  sqlite.getProducts((err, products) => {
+      res.render("about", {
+      cartCount: cart.totalQty,
+      name: utils.getUser(req.cookies),      
+      loginError: null,
+      registerError:null,
+      registerSuccess: null,
+      admin: utils.getAdmin(req.cookies),
+      searched: null
+    });
+  });
+});
+
 module.exports = router;

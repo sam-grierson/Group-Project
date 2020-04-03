@@ -137,7 +137,7 @@ router.post("/checkout-guest", (req, res) => {
   } else if (validate.isPhoneNumber(phoneNo) === false) {
     error = "Invalid phone number";
   } else if (validate.isEmail(email) === false) {
-    error = "Invalid email address"; 
+    error = "Invalid email address";
   } else if (address === "") {
     address = null;
   } else if (cardName === "") {
