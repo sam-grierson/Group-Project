@@ -31,7 +31,7 @@
           <a onclick="document.getElementById('id01').style.display='none'; document.getElementById('id02').style.display='block'" class="w3-bar-item w3-button">Register</a>
           <% } %>
         </div>
-        
+
       </div>
     </div>
 
@@ -41,11 +41,19 @@
 
   </div>
 
-  <div class="login_div" <% if (loginError) { %>style="display:block"<% } %> id="id01">
+  <div class="login_div" <% if (loginError || registerSuccess) { %>style="display:block"<% } %> id="id01">
     <span class="close" onclick="document.getElementById('id01').style.display='none'" title="Close Modal">&times;</span>
     <form class="login-content animatelog" method="POST" action="/users/login">
 
       <div class="logcontainer">
+
+        <% if (registerSuccess) { %>
+          <div class="clearfix">
+            <p style="color:green">Registration Successful!</p>
+            <p>You could login now</p>
+          </div>
+        <%}%>
+
         <% if (loginError) { %>
         <p style="color:red"><%=loginError%></p>
         <% } %>
@@ -64,7 +72,7 @@
     </form>
   </div>
 
-  <div class="signup_div" <% if (registerError || registerSuccess) { %>style="display:block"<% } %> id="id02">
+  <div class="signup_div" <% if (registerError) { %>style="display:block"<% } %> id="id02">
     <span class="close1" onclick="document.getElementById('id02').style.display='none'" title="Close Modal1">&times;</span>
     <form class="signup-content animatesign" method="POST" action="/users/register">
 
@@ -84,23 +92,13 @@
           <label for="psw-repeat"><b>Repeat Password</b></label>
           <input class="signup" type="password" placeholder="Repeat Password" name="passwordTwo" required>
           <label><input type="checkbox" checked name="remember" style="margin-bottom:15px;"> Remember me</label>
-          <% if (!registerSuccess) { %>
           <p>By creating an account you agree to our <a href="#" style="color:dodgerblue;">Terms & Policy</a>.</p>
 
           <div class="clearfix">
             <button class="cancelbtn1" type="button" onclick="document.getElementById('id02').style.display='none'">Cancel</button>
             <button class="signupbtn" type="submit">Sign Up</button>
           </div>
-
-          <% } else { %>
-
-          <div class="clearfix">
-            <p style="color:green">Registration Successful!</p>
-            <p>Would you like to <a href="#" id="signupbt" onclick="document.getElementById('id02').style.display='none'; document.getElementById('id01').style.display='block'">login</a> now? </p>
-          </div>
-
-          <% } %>
-      </div> 
+      </div>
     </form>
-  </div>  
+  </div>
 </div>
