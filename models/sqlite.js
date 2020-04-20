@@ -1,5 +1,5 @@
 const sqlite3 = require("sqlite3").verbose();
-const database = "db/database.db" // path to database
+const database = "db/assessment-database.db" // path to database
 
 exports.getProducts = callback => {
   let sql = `SELECT * FROM products`;
@@ -89,14 +89,14 @@ exports.registerUser = (username, password, email, callback) => {
 };
 
 exports.loginUser = (username, password, callback) => {
-  let sql = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
+  let sql = `SELECT * FROM users WHERE username = ? AND password = ?`;
   let db = new sqlite3.Database(database, (err) => {
     if (err) {
       return console.error(err);
     }
   });
 
-  db.get(sql, (err, row) => {
+  db.get(sql, [username, password], (err, row) => {
     if (err) {
       console.error(err);
       return callback(err);

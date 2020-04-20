@@ -5,7 +5,6 @@ function editProfile() {
   document.getElementById('user').disabled = false;
   document.getElementById('email').disabled = false;
   document.getElementById('pass').disabled = false;
-  document.getElementById('pass').type = 'text';
 };
 
 function cancelProfile() {
@@ -15,7 +14,6 @@ function cancelProfile() {
   document.getElementById('user').disabled = true;
   document.getElementById('email').disabled = true;
   document.getElementById('pass').disabled = true;
-  document.getElementById('pass').type = 'password';
 };
 
 function editPayment() {

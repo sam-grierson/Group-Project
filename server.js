@@ -3,7 +3,7 @@ const app = express();
 const path = require("path");
 const cookieParser = require("cookie-parser");
 
-const dbPath = path.resolve(__dirname,'db/database.db');
+const dbPath = path.resolve(__dirname,'db/assessment-database.db');
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database(dbPath);
 

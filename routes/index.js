@@ -9,7 +9,6 @@ const utils = require("../lib/utils")
 
 router.get("/", (req, res) => {
   let cart = new Cart(req.cookies.cart ? req.cookies.cart : {});
-  console.log(req.cookies);
   sqlite.getProducts((err, products) => {
       res.render("index", {
       cartCount: cart.totalQty,
@@ -39,7 +38,7 @@ router.post("/search", (req, res) => {
         registerError: null,
         registerSuccess: null,
         admin: utils.getAdmin(req.cookies),
-        searched: criteria
+        searched: err
       });
     } else {
       res.render("index",{
